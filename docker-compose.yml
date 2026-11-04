@@ -1,0 +1,107 @@
+# =============================================================================
+# SIGRA - Infraestructura compartida de desarrollo (Grupo 10)
+# -----------------------------------------------------------------------------
+# Levanta SOLO la infraestructura de terceros: 3 bases de datos, SSO y n8n.
+# Los microservicios (Spring Boot, NestJS, Laravel) se ejecutan localmente
+# por cada integrante durante el desarrollo.
+#
+#   Encender:  docker compose up -d
+#   Ver:       docker compose ps
+#   Apagar:    docker compose down          (conserva los datos)
+#   Reiniciar desde cero: docker compose down -v   (BORRA los datos)
+#
+# Los valores por defecto sirven SOLO para desarrollo local. Para cambiarlos,
+# copie .env.example como .env y edítelo (.env nunca se sube a Git).
+# =============================================================================
+
+name: sigra
+
+services:
+
+  # --- Base de datos 1 (relacional) -> ms-asistencia (Spring Boot) ----------
+  postgres:
+    image: postgres:16-alpine
+    container_name: sigra-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sigra_asistencia}
+      POSTGRES_USER: ${POSTGRES_USER:-sigra}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sigra_dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./deploy/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sigra} -d ${POSTGRES_DB:-sigra_asistencia}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Base de datos 2 (documental) -> ms-calificaciones (NestJS) -----------
+  mongodb:
+    image: mongo:7.0
+    container_name: sigra-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-sigra}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-sigra_dev}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-sigra_calificaciones}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./deploy/mongo/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Base de datos 3 (clave-valor) -> ms-riesgo (Laravel) -----------------
+  dynamodb:
+    image: amazon/dynamodb-local:latest
+    container_name: sigra-dynamodb
+    restart: unless-stopped
+    # root es necesario para escribir en el volumen montado.
+    user: root
+    working_dir: /home/dynamodblocal
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "./data"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - dynamodb_data:/home/dynamodblocal/data
+
+  # --- Single Sign-On (OIDC + PKCE) para Angular y React --------------------
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4
+    container_name: sigra-keycloak
+    restart: unless-stopped
+    command: ["start-dev"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+
+  # --- Automatización (workflow de notificación de alertas) -----------------
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: sigra-n8n
+    restart: unless-stopped
+    environment:
+      GENERIC_TIMEZONE: America/La_Paz
+      TZ: America/La_Paz
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  postgres_data:
+  mongo_data:
+  dynamodb_data:
+  keycloak_data:
+  n8n_data:

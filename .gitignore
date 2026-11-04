@@ -1,0 +1,66 @@
+# =============================================================================
+# SIGRA - .gitignore Global (Grupo 10)
+# =============================================================================
+
+# Entorno y Secretos (NUNCA subir a Git)
+.env
+.env.backup
+.env.production
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Directorios de Dependencias
+node_modules/
+vendor/
+
+# Compilados y artefactos de construcción
+dist/
+build/
+out/
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs y Bases de Datos locales
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+storage/logs/*
+!storage/logs/.gitkeep
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Cachés y temporales
+.cache/
+.temp/
+tmp/
+.phpunit.result.cache
+
+# Python / Modelos AI
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+*.h5
+*.keras
+
+# IDEs y Editores
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Archivos del Sistema Operativo
+.DS_Store
+Thumbs.db
+desktop.ini
