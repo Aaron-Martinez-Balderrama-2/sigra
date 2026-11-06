@@ -36,4 +36,11 @@ interface RiesgoRepositoryInterface
      * Libera el bloqueo de idempotencia en caso de fallo técnico no recuperable.
      */
     public function liberarBloqueoIdempotencia(string $operationId): void;
+
+    /**
+     * Lista los análisis y alertas de un estudiante en un curso específico.
+     *
+     * @return AnalisisRiesgo[]
+     */
+    public function listarPorEstudianteYCurso(string $estudianteId, string $cursoId): array;
 }

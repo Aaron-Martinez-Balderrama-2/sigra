@@ -17,6 +17,7 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
 {
     private string $tableAnalisis;
     private string $tableIdempotency;
+    private bool $tablasVerificadas = false;
 
     public function __construct(
         private readonly DynamoDbClient $client
@@ -25,8 +26,80 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
         $this->tableIdempotency = config('dynamodb.tables.idempotency', 'idempotency_locks');
     }
 
+    /**
+     * Asegura que las tablas de DynamoDB Local existan antes de operar.
+     */
+    public function asegurarTablas(): void
+    {
+        if ($this->tablasVerificadas) {
+            return;
+        }
+
+        try {
+            $existing = $this->client->listTables()['TableNames'] ?? [];
+
+            if (!in_array($this->tableAnalisis, $existing, true)) {
+                $this->client->createTable([
+                    'TableName' => $this->tableAnalisis,
+                    'AttributeDefinitions' => [
+                        ['AttributeName' => 'id', 'AttributeType' => 'S'],
+                        ['AttributeName' => 'estudianteId', 'AttributeType' => 'S'],
+                        ['AttributeName' => 'operationId', 'AttributeType' => 'S'],
+                    ],
+                    'KeySchema' => [
+                        ['AttributeName' => 'id', 'KeyType' => 'HASH'],
+                    ],
+                    'GlobalSecondaryIndexes' => [
+                        [
+                            'IndexName' => 'EstudianteIndex',
+                            'KeySchema' => [
+                                ['AttributeName' => 'estudianteId', 'KeyType' => 'HASH'],
+                            ],
+                            'Projection' => ['ProjectionType' => 'ALL'],
+                            'ProvisionedThroughput' => ['ReadCapacityUnits' => 5, 'WriteCapacityUnits' => 5],
+                        ],
+                        [
+                            'IndexName' => 'OperationIdIndex',
+                            'KeySchema' => [
+                                ['AttributeName' => 'operationId', 'KeyType' => 'HASH'],
+                            ],
+                            'Projection' => ['ProjectionType' => 'ALL'],
+                            'ProvisionedThroughput' => ['ReadCapacityUnits' => 5, 'WriteCapacityUnits' => 5],
+                        ],
+                    ],
+                    'ProvisionedThroughput' => [
+                        'ReadCapacityUnits' => 5,
+                        'WriteCapacityUnits' => 5,
+                    ],
+                ]);
+            }
+
+            if (!in_array($this->tableIdempotency, $existing, true)) {
+                $this->client->createTable([
+                    'TableName' => $this->tableIdempotency,
+                    'AttributeDefinitions' => [
+                        ['AttributeName' => 'operationId', 'AttributeType' => 'S'],
+                    ],
+                    'KeySchema' => [
+                        ['AttributeName' => 'operationId', 'KeyType' => 'HASH'],
+                    ],
+                    'ProvisionedThroughput' => [
+                        'ReadCapacityUnits' => 5,
+                        'WriteCapacityUnits' => 5,
+                    ],
+                ]);
+            }
+
+            $this->tablasVerificadas = true;
+        } catch (\Throwable $e) {
+            Log::warning("Aviso al verificar tablas DynamoDB Local: " . $e->getMessage());
+        }
+    }
+
     public function guardar(AnalisisRiesgo $analisis): void
     {
+        $this->asegurarTablas();
+
         $item = [
             'id' => ['S' => $analisis->getId()],
             'operationId' => ['S' => $analisis->getOperationId()],
@@ -65,6 +138,8 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
 
     public function buscarPorId(string $id): ?AnalisisRiesgo
     {
+        $this->asegurarTablas();
+
         try {
             $result = $this->client->getItem([
                 'TableName' => $this->tableAnalisis,
@@ -86,6 +161,8 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
 
     public function buscarPorOperationId(string $operationId): ?AnalisisRiesgo
     {
+        $this->asegurarTablas();
+
         try {
             $result = $this->client->scan([
                 'TableName' => $this->tableAnalisis,
@@ -93,7 +170,6 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
                 'ExpressionAttributeValues' => [
                     ':opId' => ['S' => $operationId],
                 ],
-                'Limit' => 1,
             ]);
 
             if (empty($result['Items']) || count($result['Items']) === 0) {
@@ -107,12 +183,37 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
         }
     }
 
+    public function listarPorEstudianteYCurso(string $estudianteId, string $cursoId): array
+    {
+        $this->asegurarTablas();
+
+        try {
+            $result = $this->client->scan([
+                'TableName' => $this->tableAnalisis,
+                'FilterExpression' => 'estudianteId = :estId AND cursoId = :curId',
+                'ExpressionAttributeValues' => [
+                    ':estId' => ['S' => $estudianteId],
+                    ':curId' => ['S' => $cursoId],
+                ],
+            ]);
+
+            $items = $result['Items'] ?? [];
+
+            return array_map(fn(array $raw) => $this->hidratarEntidad($raw), $items);
+        } catch (DynamoDbException $e) {
+            Log::error("Error al listar por estudiante y curso en DynamoDB: " . $e->getMessage());
+            return [];
+        }
+    }
+
     /**
      * Bloqueo atómico condicional de Idempotencia.
      * Si operationId ya existe, DynamoDB lanza ConditionalCheckFailedException y retornamos false.
      */
     public function adquirirBloqueoIdempotencia(string $operationId, string $accion): bool
     {
+        $this->asegurarTablas();
+
         try {
             $this->client->putItem([
                 'TableName' => $this->tableIdempotency,
@@ -137,6 +238,8 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
 
     public function liberarBloqueoIdempotencia(string $operationId): void
     {
+        $this->asegurarTablas();
+
         try {
             $this->client->deleteItem([
                 'TableName' => $this->tableIdempotency,

@@ -130,4 +130,33 @@ class RiesgoController extends Controller
             'datos' => $analisis->toArray(),
         ], 200);
     }
+
+    /**
+     * Consulta de alertas y análisis por estudiante y curso (Integración MCP / Ficha).
+     * GET /api/v1/riesgo/alertas?estudianteId=...&cursoId=...
+     * GET /api/v1/riesgo/alertas/{cursoId}/{estudianteId}
+     */
+    public function alertas(\Illuminate\Http\Request $request, ?string $cursoId = null, ?string $estudianteId = null): JsonResponse
+    {
+        $estId = trim((string) ($estudianteId ?? $request->query('estudianteId', '')));
+        $curId = trim((string) ($cursoId ?? $request->query('cursoId', '')));
+
+        if (empty($estId) || empty($curId)) {
+            return response()->json([
+                'status' => 'ERROR_VALIDACION',
+                'mensaje' => 'Los parámetros estudianteId y cursoId son obligatorios.',
+            ], 422);
+        }
+
+        $lista = $this->repository->listarPorEstudianteYCurso($estId, $curId);
+        $datos = array_map(fn($a) => $a->toArray(), $lista);
+
+        return response()->json([
+            'status' => 'EXITO',
+            'estudianteId' => $estId,
+            'cursoId' => $curId,
+            'total' => count($datos),
+            'datos' => $datos,
+        ], 200);
+    }
 }

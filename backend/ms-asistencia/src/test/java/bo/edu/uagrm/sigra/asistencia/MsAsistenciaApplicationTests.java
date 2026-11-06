@@ -1,32 +1,25 @@
 package bo.edu.uagrm.sigra.asistencia;
 
-import bo.edu.uagrm.sigra.asistencia.infrastructure.adapters.out.persistence.repository.SpringDataAsistenciaRepository;
-import bo.edu.uagrm.sigra.asistencia.infrastructure.adapters.out.persistence.repository.SpringDataJustificativoRepository;
-import bo.edu.uagrm.sigra.asistencia.infrastructure.adapters.out.persistence.repository.SpringDataMarcaSeguimientoRepository;
-import bo.edu.uagrm.sigra.asistencia.infrastructure.adapters.out.persistence.repository.SpringDataOperacionProcesadaRepository;
+import bo.edu.uagrm.sigra.asistencia.domain.ports.out.AsistenciaRepositoryPort;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-@SpringBootTest(properties = {
-		"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration"
-})
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
+@DisplayName("MsAsistenciaApplicationTests - Contexto Spring Boot y Base de Datos Relacional Real")
 class MsAsistenciaApplicationTests {
 
-	@MockBean
-	private SpringDataAsistenciaRepository asistenciaRepository;
-
-	@MockBean
-	private SpringDataMarcaSeguimientoRepository marcaRepository;
-
-	@MockBean
-	private SpringDataJustificativoRepository justificativoRepository;
-
-	@MockBean
-	private SpringDataOperacionProcesadaRepository operacionRepository;
+	@Autowired
+	private AsistenciaRepositoryPort asistenciaRepository;
 
 	@Test
+	@DisplayName("El contexto de Spring Boot inicia y la base de datos relacional carga con los datos iniciales")
 	void contextLoads() {
+		assertThat(asistenciaRepository).isNotNull();
+		var asistenciasSec3b = asistenciaRepository.buscarPorCursoYFecha("sec-3b", java.time.LocalDate.now());
+		assertThat(asistenciasSec3b).isNotEmpty();
 	}
-
 }

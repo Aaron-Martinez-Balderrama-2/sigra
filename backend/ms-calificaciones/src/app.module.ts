@@ -6,6 +6,7 @@ import { GraphQLError } from 'graphql';
 import { AppController } from './app.controller';
 import { KeycloakGuard } from './adapters/auth/auth';
 import { MongoStore } from './adapters/persistence/mongo/mongo-store';
+import { InMemoryStore } from './adapters/persistence/memory/in-memory-store';
 import { HttpServices } from './adapters/http/services';
 import { CalificacionesResolver } from './adapters/graphql/resolver';
 import { STORE, Store } from './core/ports/store';
@@ -65,11 +66,16 @@ import { AgentController } from './adapters/agent/controller';
     AgentController,
   ],
   providers: [
-    MongoStore,
     HttpServices,
     CalificacionesResolver,
     ToolsService,
-    { provide: STORE, useExisting: MongoStore },
+    {
+      provide: STORE,
+      useFactory: () =>
+        process.env.STORE_DRIVER === 'memory'
+          ? new InMemoryStore()
+          : new MongoStore(),
+    },
     { provide: SERVICES, useExisting: HttpServices },
     {
       provide: PrepararEvaluacion,

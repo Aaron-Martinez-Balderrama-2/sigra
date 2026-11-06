@@ -10,92 +10,92 @@
     ],
     "matriz_confusion": [
       [
-        65,
+        41,
         0,
         0
       ],
       [
         0,
-        20,
+        40,
         0
       ],
       [
         0,
         0,
-        15
+        119
       ]
     ],
     "importancia_variables": {
-      "promedio_notas": 0.3718,
-      "porcentaje_asistencia": 0.397,
-      "faltas_sin_justificar": 0.2312
+      "promedio_notas": 0.3343,
+      "porcentaje_asistencia": 0.3805,
+      "faltas_sin_justificar": 0.2852
     },
     "reporte_clasificacion": {
       "BAJO": {
         "precision": 1.0,
         "recall": 1.0,
         "f1_score": 1.0,
-        "soporte": 65
+        "soporte": 41
       },
       "MEDIO": {
         "precision": 1.0,
         "recall": 1.0,
         "f1_score": 1.0,
-        "soporte": 20
+        "soporte": 40
       },
       "ALTO": {
         "precision": 1.0,
         "recall": 1.0,
         "f1_score": 1.0,
-        "soporte": 15
+        "soporte": 119
       }
     }
   },
   "kmeans": {
     "modelo": "KMeans",
     "k_clusters": 3,
-    "silhouette_score": 0.6079,
+    "silhouette_score": 0.3727,
     "perfiles": [
       {
         "cluster_id": 0,
-        "tipo": "DESTACADO",
-        "nombre_perfil": "Alto Desempeño y Asistencia Regular",
-        "conteo_estudiantes": 326,
-        "porcentaje_poblacion": "65.2%",
-        "centroide_promedio_notas": 84.21,
-        "centroide_porcentaje_asistencia": 92.53
+        "tipo": "CRITICO",
+        "nombre_perfil": "Riesgo Crítico de Deserción/Reprobación",
+        "conteo_estudiantes": 315,
+        "porcentaje_poblacion": "31.5%",
+        "centroide_promedio_notas": 42.41,
+        "centroide_porcentaje_asistencia": 39.5
       },
       {
         "cluster_id": 1,
         "tipo": "CRITICO",
         "nombre_perfil": "Riesgo Crítico de Deserción/Reprobación",
-        "conteo_estudiantes": 74,
-        "porcentaje_poblacion": "14.8%",
-        "centroide_promedio_notas": 37.01,
-        "centroide_porcentaje_asistencia": 53.43
+        "conteo_estudiantes": 257,
+        "porcentaje_poblacion": "25.7%",
+        "centroide_promedio_notas": 38.0,
+        "centroide_porcentaje_asistencia": 76.87
       },
       {
         "cluster_id": 2,
         "tipo": "MEDIO",
         "nombre_perfil": "Vulnerabilidad Académica Moderada",
-        "conteo_estudiantes": 100,
-        "porcentaje_poblacion": "20.0%",
-        "centroide_promedio_notas": 61.06,
-        "centroide_porcentaje_asistencia": 74.24
+        "conteo_estudiantes": 428,
+        "porcentaje_poblacion": "42.8%",
+        "centroide_promedio_notas": 79.18,
+        "centroide_porcentaje_asistencia": 79.4
       }
     ],
     "centroides_normalizados": [
       [
-        0.611389530378859,
-        0.6232945631712596
+        -0.5820395546370505,
+        -1.2090317447695451
       ],
       [
-        -1.8730188852737393,
-        -1.957000529354547
+        -0.7576175506752891,
+        0.4842772543949311
       ],
       [
-        -0.6070958939325134,
-        -0.5837598842159434
+        0.8794698197751631,
+        0.598764621159219
       ]
     ]
   },

@@ -35,9 +35,9 @@ if not os.path.exists(csv_path):
     test_fallido(f"No existe {csv_path}")
 
 df = pd.read_csv(csv_path)
-if len(df) != 500:
-    test_fallido(f"El dataset debe tener exactamente 500 registros, encontrados: {len(df)}")
-test_exitoso(f"Dataset tabular con 500 registros validado.")
+if len(df) < 500:
+    test_fallido(f"El dataset debe tener al menos 500 registros, encontrados: {len(df)}")
+test_exitoso(f"Dataset tabular con {len(df)} registros validado.")
 
 # 2. Sin nulos ni NaNs
 if df.isnull().values.any():

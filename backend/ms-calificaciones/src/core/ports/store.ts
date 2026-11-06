@@ -10,5 +10,6 @@ export interface DataStore {
 }
 export interface Store extends DataStore {
   transaction<T>(work: (tx: DataStore) => Promise<T>): Promise<T>;
+  ping?(): Promise<void>;
 }
-export const STORE = Symbol('STORE');
+export const STORE = Symbol.for('SIGRA_STORE');

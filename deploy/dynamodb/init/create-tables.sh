@@ -14,14 +14,21 @@ aws dynamodb create-table \
     --table-name analisis_riesgo \
     --attribute-definitions \
         AttributeName=id,AttributeType=S \
-        AttributeName=estudiante_id,AttributeType=S \
+        AttributeName=estudianteId,AttributeType=S \
+        AttributeName=operationId,AttributeType=S \
     --key-schema \
         AttributeName=id,KeyType=HASH \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
     --global-secondary-indexes '[
         {
             "IndexName": "EstudianteIndex",
-            "KeySchema": [{"AttributeName":"estudiante_id","KeyType":"HASH"}],
+            "KeySchema": [{"AttributeName":"estudianteId","KeyType":"HASH"}],
+            "Projection":{"ProjectionType":"ALL"},
+            "ProvisionedThroughput":{"ReadCapacityUnits":5,"WriteCapacityUnits":5}
+        },
+        {
+            "IndexName": "OperationIdIndex",
+            "KeySchema": [{"AttributeName":"operationId","KeyType":"HASH"}],
             "Projection":{"ProjectionType":"ALL"},
             "ProvisionedThroughput":{"ReadCapacityUnits":5,"WriteCapacityUnits":5}
         }
@@ -33,9 +40,9 @@ aws dynamodb create-table \
     --region $REGION \
     --table-name idempotency_locks \
     --attribute-definitions \
-        AttributeName=idempotency_key,AttributeType=S \
+        AttributeName=operationId,AttributeType=S \
     --key-schema \
-        AttributeName=idempotency_key,KeyType=HASH \
+        AttributeName=operationId,KeyType=HASH \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 2>/dev/null || echo "Tabla 'idempotency_locks' ya existe."
 
 echo "Tablas DynamoDB configuradas."

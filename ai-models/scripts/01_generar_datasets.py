@@ -55,41 +55,53 @@ def crear_imagen_documento(texto, legible=True, seed=0):
     # Redimensionar al tamaño estándar de la CNN (64x64)
     return img.resize((64, 64), Image.Resampling.LANCZOS)
 
+def determinar_riesgo(promedio, asistencia, faltas_sj):
+    """Reglas oficiales de riesgo escolar de SIGRA y Laravel ms-riesgo"""
+    if promedio < 51.0 or asistencia < 65.0 or faltas_sj >= 4:
+        return "ALTO"
+    elif promedio < 70.0 or asistencia < 80.0 or faltas_sj >= 2:
+        return "MEDIO"
+    else:
+        return "BAJO"
+
 def generar_todos_los_datasets():
     os.makedirs(DATA_DIR, exist_ok=True)
     for split in ["train", "test"]:
         for label in ["legible", "ilegible"]:
             os.makedirs(os.path.join(DOCS_DIR, split, label), exist_ok=True)
 
-    # 1. Dataset Tabular
-    print("==> Generando dataset_estudiantes.csv (500 registros)...")
+    # 1. Dataset Tabular con muestreo uniforme y casos cruzados realistas
+    print("==> Generando dataset_estudiantes.csv (1000 registros balanceados)...")
     estudiantes = []
     cursos = ["sec-1a", "sec-1b", "sec-2a", "sec-2b", "sec-3a", "sec-3b"]
 
-    for i in range(1, 501):
-        est_id = f"est-{i:03d}"
+    # Generamos 1000 registros cubriendo todas las combinaciones reales del espacio de características
+    for i in range(1, 1001):
+        est_id = f"est-{i:04d}"
         curso = random.choice(cursos)
         
-        perfil = random.choices(["bueno", "medio", "critico"], weights=[0.65, 0.20, 0.15])[0]
-        if perfil == "bueno":
-            promedio = round(random.uniform(70.0, 98.0), 1)
-            asistencia = round(random.uniform(85.0, 100.0), 1)
-            faltas_sj = random.randint(0, 1)
-        elif perfil == "medio":
-            promedio = round(random.uniform(51.0, 69.9), 1)
-            asistencia = round(random.uniform(65.0, 84.9), 1)
-            faltas_sj = random.randint(1, 3)
+        # 50% casos típicos correlacionados, 50% muestreo uniforme del espacio para evitar sesgos
+        if random.random() < 0.5:
+            perfil = random.choices(["bueno", "medio", "critico"], weights=[0.4, 0.3, 0.3])[0]
+            if perfil == "bueno":
+                promedio = round(random.uniform(70.0, 100.0), 1)
+                asistencia = round(random.uniform(80.0, 100.0), 1)
+                faltas_sj = random.randint(0, 1)
+            elif perfil == "medio":
+                promedio = round(random.uniform(51.0, 69.9), 1)
+                asistencia = round(random.uniform(65.0, 79.9), 1)
+                faltas_sj = random.randint(1, 3)
+            else:
+                promedio = round(random.uniform(10.0, 50.9), 1)
+                asistencia = round(random.uniform(20.0, 64.9), 1)
+                faltas_sj = random.randint(3, 8)
         else:
-            promedio = round(random.uniform(25.0, 50.9), 1)
-            asistencia = round(random.uniform(40.0, 64.9), 1)
-            faltas_sj = random.randint(3, 8)
+            # Muestreo uniforme de casos límite (asistencias altas con reprobados, etc.)
+            promedio = round(random.uniform(10.0, 100.0), 1)
+            asistencia = round(random.uniform(20.0, 100.0), 1)
+            faltas_sj = random.randint(0, 8)
 
-        if promedio < 51.0 or asistencia < 65.0 or faltas_sj >= 4:
-            riesgo = "ALTO"
-        elif promedio < 70.0 or asistencia < 80.0 or faltas_sj >= 2:
-            riesgo = "MEDIO"
-        else:
-            riesgo = "BAJO"
+        riesgo = determinar_riesgo(promedio, asistencia, faltas_sj)
 
         estudiantes.append({
             "estudiante_id": est_id,
@@ -103,9 +115,9 @@ def generar_todos_los_datasets():
     df_estudiantes = pd.DataFrame(estudiantes)
     csv_path = os.path.join(DATA_DIR, "dataset_estudiantes.csv")
     df_estudiantes.to_csv(csv_path, index=False, encoding="utf-8")
-    print(f"    Dataset guardado en: {csv_path}")
+    print(f"    Dataset guardado en: {csv_path} (Distribución: {dict(df_estudiantes['nivel_riesgo'].value_counts())})")
 
-    # 2. Dataset Imagenes
+    # 2. Dataset Imágenes
     print("\n==> Generando dataset_documentos (200 imágenes: 100 legibles / 100 ilegibles)...")
     TOTAL_POR_CLASE = 100
     TRAIN_RATIO = 0.8
@@ -123,8 +135,8 @@ def generar_todos_los_datasets():
         path_ilegible = os.path.join(DOCS_DIR, split, "ilegible", f"doc_ilegible_{idx:03d}.png")
         img_ilegible.save(path_ilegible)
 
-    print(f"    Imagenes guardadas exitosamente en: {DOCS_DIR}")
-    print("==> GENERACION DE DATASETS COMPLETADA EXITOSAMENTE.")
+    print(f"    Imágenes guardadas exitosamente en: {DOCS_DIR}")
+    print("==> GENERACIÓN DE DATASETS COMPLETADA EXITOSAMENTE.")
 
 if __name__ == "__main__":
     generar_todos_los_datasets()

@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "marcas_seguimiento")
+@Table(name = "marcas_seguimiento", uniqueConstraints = {
+        @UniqueConstraint(name = "uq_marcas_operation_id", columnNames = {"operation_id"})
+})
 public class MarcaSeguimientoJpaEntity {
 
     @Id

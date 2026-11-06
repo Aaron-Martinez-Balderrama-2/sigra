@@ -31,6 +31,10 @@ Route::prefix('v1')->group(function () {
         // Paso 3 de la SAGA: Crear análisis pendiente con Idempotencia
         Route::post('/pendiente', [RiesgoController::class, 'crearPendiente']);
 
+        // Listado de alertas y análisis por estudiante y curso (MCP / Ficha Integrada)
+        Route::get('/alertas', [RiesgoController::class, 'alertas']);
+        Route::get('/alertas/{cursoId}/{estudianteId}', [RiesgoController::class, 'alertas']);
+
         // Evaluación de métricas
         Route::post('/{id}/evaluar', [RiesgoController::class, 'evaluar']);
 
