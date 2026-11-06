@@ -18,7 +18,7 @@ vendor/
 # Compilados y artefactos de construcción
 dist/
 build/
-out/
+/out/
 target/
 *.class
 *.jar
