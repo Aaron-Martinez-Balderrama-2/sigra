@@ -1,0 +1,59 @@
+flowchart TD
+    %% =========================================================================
+    %% BLOQUE 2: MICROSERVICIO DE CALIFICACIONES (ms-calificaciones)
+    %% Responsable: Mendieta Albán Letizia | TypeScript + NestJS 10 + MongoDB + GraphQL
+    %% Arquitectura: Clean Architecture
+    %% =========================================================================
+
+    subgraph CLIENTE["Cliente Externo / Frontend / SAGA"]
+        REST_REQ1["POST /api/v1/calificaciones (Registrar Nota)"]
+        REST_REQ2["POST /api/v1/calificaciones/:id/compensar (Rollback SAGA)"]
+        GQL_REQ["Query GraphQL: calificacionesPorEstudiante(estudianteId)"]
+    end
+
+    subgraph ADAPTERS_IN["Adapters In (Interfaces de Entrada)"]
+        REST_CTRL["CalificacionesController (Puerto 8003)"]
+        GQL_RESOLVER["CalificacionesResolver (Apollo Server / GraphQL)"]
+        DTO_VAL["RegistrarCalificacionDto (class-validator / Sanitización)"]
+    end
+
+    subgraph USE_CASES["Core Use Cases (Capa de Aplicación)"]
+        UC1["RegistrarCalificacionUseCase (Valida Idempotencia y Regla de Nota)"]
+        UC2["CompensarCalificacionUseCase (Reversión a REVOCADA_SAGA)"]
+        UC3["ConsultarFichaCalificacionesUseCase (Alimenta GraphQL)"]
+    end
+
+    subgraph ENTITIES["Core Entities (Dominio de Negocio)"]
+        ENTITY["Entidad: Calificacion (id, operationId, estudianteId, cursoId, nota, estado)"]
+        ESTADOS_CALIF["Estados: CONFIRMADA | REVOCADA_SAGA"]
+    end
+
+    subgraph ADAPTERS_OUT["Adapters Out (Persistencia NoSQL)"]
+        REPO["CalificacionRepository (Implementa puerto de persistencia)"]
+        SCHEMA["CalificacionSchema (Mongoose Document)"]
+    end
+
+    subgraph DB["Base de Datos MongoDB (Docker)"]
+        MONGO[("MongoDB 7.0\nPort: 27017\nDB: sigra_calificaciones\nColección: calificaciones")]
+    end
+
+    %% Conexiones
+    REST_REQ1 --> REST_CTRL
+    REST_REQ2 --> REST_CTRL
+    GQL_REQ --> GQL_RESOLVER
+
+    REST_CTRL --> DTO_VAL
+    DTO_VAL --> UC1
+    REST_CTRL --> UC2
+    GQL_RESOLVER --> UC3
+
+    UC1 --> ENTITY
+    UC2 --> ENTITY
+    UC3 --> ENTITY
+    ENTITY -.-> ESTADOS_CALIF
+
+    UC1 --> REPO
+    UC2 --> REPO
+    UC3 --> REPO
+    REPO --> SCHEMA
+    SCHEMA --> MONGO

@@ -1,0 +1,55 @@
+flowchart TD
+    %% =========================================================================
+    %% BLOQUE 1: MICROSERVICIO DE ASISTENCIA (ms-asistencia)
+    %% Responsable: Guzman Rojas Luis David | Java 21 + Spring Boot 3.3 + PostgreSQL
+    %% Arquitectura: Hexagonal (Ports & Adapters)
+    %% =========================================================================
+
+    subgraph CLIENTE["Cliente Externo / Frontend / SAGA"]
+        REQ1["POST /api/v1/asistencias (Registrar con Idempotencia)"]
+        REQ2["POST /api/v1/asistencias/{id}/compensar (Rollback SAGA)"]
+        REQ3["GET /api/v1/health (Healthcheck)"]
+    end
+
+    subgraph ADAPTERS_IN["Adapters In (Infrastructure REST)"]
+        CTRL["AsistenciaController (Puerto 8002)"]
+        DTO_REQ["RegistrarAsistenciaRequest (operationId, estudianteId, cursoId, presente)"]
+    end
+
+    subgraph APPLICATION["Application Layer (Casos de Uso)"]
+        SVC["AsistenciaApplicationService"]
+        PORT_IN1["Puerto In: RegistrarAsistenciaUseCase"]
+        PORT_IN2["Puerto In: CompensarAsistenciaUseCase"]
+    end
+
+    subgraph DOMAIN["Domain Core (Modelo Puro sin Framework)"]
+        MODEL["Entidad: Asistencia (id, operationId, estudianteId, cursoId, presente, estado)"]
+        ESTADOS["Estados: REGISTRADA | ANULADA_POR_COMPENSACION"]
+    end
+
+    subgraph ADAPTERS_OUT["Adapters Out (Infrastructure Persistence)"]
+        PORT_OUT["Puerto Out: AsistenciaRepositoryPort"]
+        ADAPTER_PERSIST["AsistenciaPersistenceAdapter"]
+        JPA_REPO["SpringDataAsistenciaRepository (JpaRepository)"]
+        ENTITY_JPA["AsistenciaEntity (Anotada con @Entity)"]
+    end
+
+    subgraph DB["Base de Datos PostgreSQL (Docker)"]
+        PG[("PostgreSQL 16\nPort: 5432\nDB: sigra_asistencia\nTabla: asistencias")]
+    end
+
+    %% Conexiones
+    REQ1 --> CTRL
+    REQ2 --> CTRL
+    REQ3 --> CTRL
+    CTRL --> DTO_REQ
+    DTO_REQ --> PORT_IN1
+    PORT_IN1 --> SVC
+    PORT_IN2 --> SVC
+    SVC --> MODEL
+    MODEL -.-> ESTADOS
+    SVC --> PORT_OUT
+    PORT_OUT --> ADAPTER_PERSIST
+    ADAPTER_PERSIST --> JPA_REPO
+    JPA_REPO --> ENTITY_JPA
+    ENTITY_JPA --> PG
