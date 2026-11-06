@@ -1,0 +1,26 @@
+# Dependencias reales y separadas. No modifica el compose ni las bases del equipo.
+name: sigra-calificaciones-dev
+services:
+  mongo:
+    image: mongo:7.0
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
+    ports: ["127.0.0.1:27018:27018"]
+    volumes: ["mongo_data:/data/db"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27018", "--quiet", "--eval", "try { rs.status() } catch (e) { rs.initiate({_id:'rs0',members:[{_id:0,host:'localhost:27018'}]}) }"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin_local_only
+    ports: ["127.0.0.1:8180:8080"]
+    volumes:
+      - ./dev/keycloak-realm.json:/opt/keycloak/data/import/sigra-calificaciones.json:ro
+      - keycloak_data:/opt/keycloak/data
+volumes:
+  mongo_data:
+  keycloak_data:

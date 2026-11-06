@@ -1,12 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service.js';
-
+import { Public } from './adapters/auth/auth';
+import { MongoStore } from './adapters/persistence/mongo/mongo-store';
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  constructor(private readonly store: MongoStore) {}
+  @Public()
+  @Get('health')
+  async health() {
+    await this.store.ping();
+    return { status: 'UP', service: 'ms-calificaciones' };
   }
 }
