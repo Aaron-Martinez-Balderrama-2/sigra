@@ -1,0 +1,22 @@
+{
+  "name": "Unidad Educativa SIGRA — Portal de Dirección y Seguimiento Escolar",
+  "short_name": "SIGRA Seguimiento",
+  "description": "Plataforma Escolar de Seguimiento Académico, Detección de Riesgo, Escáner CNN TensorFlow.js Offline, Agente MCP y Reportes Multiformato",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0B2545",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/assets/icono.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/assets/icono.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
