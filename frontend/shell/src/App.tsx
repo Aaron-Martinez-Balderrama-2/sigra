@@ -14,6 +14,13 @@ import { SecurityAuditView } from './components/SecurityAuditView';
 export const App: React.FC = () => {
   const [sesion, setSesion] = useState<SesionSso | null>(null);
   const [moduloActivo, setModuloActivo] = useState<ModuloActivo>('DOCENTE_ANGULAR');
+  const [modoTest, setModoTest] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('sigra_modo_test') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     const s = obtenerSesionInicial();
@@ -21,6 +28,18 @@ export const App: React.FC = () => {
       setSesion(s);
     }
   }, []);
+
+  const handleToggleModoTest = () => {
+    setModoTest((prev) => {
+      const nuevo = !prev;
+      try {
+        localStorage.setItem('sigra_modo_test', String(nuevo));
+      } catch {
+        // ignore
+      }
+      return nuevo;
+    });
+  };
 
   const handleLoginExitoso = (nuevaSesion: SesionSso) => {
     setSesion(nuevaSesion);
@@ -48,9 +67,11 @@ export const App: React.FC = () => {
       <ShellHeader
         sesion={sesion}
         moduloActivo={moduloActivo}
+        modoTest={modoTest}
         onCambiarModulo={setModuloActivo}
         onCambiarRol={handleCambiarRol}
         onCerrarSesion={handleCerrarSesion}
+        onToggleModoTest={handleToggleModoTest}
       />
 
       {/* Contenido Principal: El Microfrontend Seleccionado */}
@@ -62,6 +83,7 @@ export const App: React.FC = () => {
             tecnologia="Angular 18 • PWA • IndexedDB • GraphQL"
             puerto={4201}
             sesion={sesion}
+            modoTest={modoTest}
           />
         )}
 
@@ -72,16 +94,17 @@ export const App: React.FC = () => {
             tecnologia="React 18 • PWA • TensorFlow.js • Agente MCP"
             puerto={4202}
             sesion={sesion}
+            modoTest={modoTest}
           />
         )}
 
-        {moduloActivo === 'SEGURIDAD_SSO' && <SecurityAuditView sesion={sesion} />}
+        {moduloActivo === 'SEGURIDAD_SSO' && <SecurityAuditView sesion={sesion} modoTest={modoTest} />}
       </main>
 
       {/* Pie Institucional del Shell */}
       <footer className="shell-footer-institucional">
         <p>
-          <strong>Unidad Educativa SIGRA</strong> — App Shell Orquestador (Puerto :4200) • Sistema Distribuido de Gestión Escolar • Grupo 10 (Ingeniería de Software II)
+          <strong>Unidad Educativa SIGRA</strong> — {modoTest ? 'App Shell Orquestador (Puerto :4200) • Sistema Distribuido de Gestión Escolar • Grupo 10 (Ingeniería de Software II)' : 'Plataforma Integrada de Gestión Escolar y Seguimiento Estudiantil'}
         </p>
       </footer>
     </div>

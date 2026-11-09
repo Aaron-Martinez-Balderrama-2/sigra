@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, UserCheck, KeyRound, CheckCircle2, AlertCircle } from 'lucide-react';
+import {
+  ShieldCheck,
+  UserCheck,
+  KeyRound,
+  CheckCircle2,
+  AlertCircle,
+  Shield,
+  BookOpen,
+  Users,
+  Sparkles,
+} from 'lucide-react';
 import { RolUsuario, SesionSso } from '../types/shell';
 import { autenticarRapido, verificarEstadoKeycloak } from '../services/ssoAuth';
 
@@ -110,8 +120,9 @@ export const LoginView: React.FC<Props> = ({ onLoginExitoso }) => {
 
         {/* Acceso Rápido por Perfil para Defensa (1 Solo Clic) */}
         <div className="seccion-acceso-rapido">
-          <label className="etiqueta-seccion">
-            ⚡ <strong>Acceso Inmediato por Rol Escolar (Demostración de Examen):</strong>
+          <label className="etiqueta-seccion" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Sparkles size={14} className="icono-dorado" />
+            <strong>Acceso Inmediato por Rol Escolar (Demostración de Examen):</strong>
           </label>
           <div className="grid-perfiles-demo">
             <button
@@ -119,7 +130,10 @@ export const LoginView: React.FC<Props> = ({ onLoginExitoso }) => {
               className={`btn-perfil-demo ${rolSeleccionado === 'DIRECTOR' ? 'perfil-activo' : ''}`}
               onClick={() => handleAccesoRapido('DIRECTOR')}
             >
-              <div className="demo-rol-titulo">👩‍💼 Directora General</div>
+              <div className="demo-rol-titulo" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Shield size={13} />
+                <span>Directora General</span>
+              </div>
               <div className="demo-rol-nombre">Lic. Sofia Morales</div>
               <small className="demo-rol-permisos">Acceso Total: Riesgo, Agente MCP, Reportes y Aulas</small>
             </button>
@@ -129,7 +143,10 @@ export const LoginView: React.FC<Props> = ({ onLoginExitoso }) => {
               className={`btn-perfil-demo ${rolSeleccionado === 'DOCENTE' ? 'perfil-activo' : ''}`}
               onClick={() => handleAccesoRapido('DOCENTE')}
             >
-              <div className="demo-rol-titulo">👩‍🏫 Docente de Aula</div>
+              <div className="demo-rol-titulo" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <BookOpen size={13} />
+                <span>Docente de Aula</span>
+              </div>
               <div className="demo-rol-nombre">Prof. Carlos Méndez</div>
               <small className="demo-rol-permisos">3.° B de Secundaria • Matemáticas • Notas y Asistencia</small>
             </button>
@@ -139,7 +156,10 @@ export const LoginView: React.FC<Props> = ({ onLoginExitoso }) => {
               className={`btn-perfil-demo ${rolSeleccionado === 'PADRE' ? 'perfil-activo' : ''}`}
               onClick={() => handleAccesoRapido('PADRE')}
             >
-              <div className="demo-rol-titulo">👨‍👩‍👦 Tutor / Padre</div>
+              <div className="demo-rol-titulo" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Users size={13} />
+                <span>Tutor / Padre</span>
+              </div>
               <div className="demo-rol-nombre">Sr. Roberto Flores</div>
               <small className="demo-rol-permisos">Consulta de Notas y Justificativos Médicos</small>
             </button>

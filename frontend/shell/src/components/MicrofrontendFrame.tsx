@@ -8,6 +8,7 @@ interface Props {
   tecnologia: string;
   puerto: number;
   sesion: SesionSso;
+  modoTest?: boolean;
 }
 
 export const MicrofrontendFrame: React.FC<Props> = ({
@@ -16,6 +17,7 @@ export const MicrofrontendFrame: React.FC<Props> = ({
   tecnologia,
   puerto,
   sesion,
+  modoTest = false,
 }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -31,6 +33,7 @@ export const MicrofrontendFrame: React.FC<Props> = ({
           token: sesion.token,
           actor: sesion.actor,
           contextoEscolar: sesion.contextoEscolar,
+          modoTest: modoTest,
         },
       };
 
@@ -46,7 +49,7 @@ export const MicrofrontendFrame: React.FC<Props> = ({
     transmitirSesionSso();
     const interval = setInterval(transmitirSesionSso, 2000);
     return () => clearInterval(interval);
-  }, [sesion, iframeKey]);
+  }, [sesion, iframeKey, modoTest]);
 
   const handleIframeLoad = () => {
     setCargando(false);
@@ -62,42 +65,44 @@ export const MicrofrontendFrame: React.FC<Props> = ({
 
   return (
     <div className="shell-frame-wrapper">
-      {/* Barra de Estado del Microfrontend */}
-      <div className="shell-frame-toolbar">
-        <div className="frame-info-meta">
-          <span className="badge-puerto">:{puerto}</span>
-          <span className="frame-titulo-texto">
-            <strong>{titulo}</strong> ({tecnologia})
-          </span>
-          <span className="badge-sso-sync mfe-pill-status">
-            <CheckCircle2 size={13} />
-            <span>Sesión SSO Inyectada</span>
-          </span>
-        </div>
+      {/* Barra de Diagnóstico del Microfrontend (Visible únicamente en Modo Test) */}
+      {modoTest && (
+        <div className="shell-frame-toolbar">
+          <div className="frame-info-meta">
+            <span className="badge-puerto">:{puerto}</span>
+            <span className="frame-titulo-texto">
+              <strong>{titulo}</strong> ({tecnologia})
+            </span>
+            <span className="badge-sso-sync mfe-pill-status">
+              <CheckCircle2 size={13} />
+              <span>Sesión SSO Inyectada</span>
+            </span>
+          </div>
 
-        <div className="frame-acciones">
-          <button
-            type="button"
-            className="btn-toolbar-accion"
-            onClick={recargarIframe}
-            title="Recargar este microfrontend"
-          >
-            <RefreshCw size={14} className={cargando ? 'anim-girar' : ''} />
-            <span>Recargar</span>
-          </button>
+          <div className="frame-acciones">
+            <button
+              type="button"
+              className="btn-toolbar-accion"
+              onClick={recargarIframe}
+              title="Recargar este microfrontend"
+            >
+              <RefreshCw size={14} className={cargando ? 'anim-girar' : ''} />
+              <span>Recargar</span>
+            </button>
 
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-toolbar-accion"
-            title="Abrir microfrontend en ventana independiente"
-          >
-            <ExternalLink size={14} />
-            <span>Abrir en ventana</span>
-          </a>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-toolbar-accion"
+              title="Abrir microfrontend en ventana independiente"
+            >
+              <ExternalLink size={14} />
+              <span>Abrir en ventana</span>
+            </a>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Contenedor Iframe con Fallback */}
       <div className="shell-iframe-container">
@@ -132,7 +137,8 @@ export const MicrofrontendFrame: React.FC<Props> = ({
               Asegúrese de tener el servicio corriendo en <code>http://localhost:{puerto}</code>.
             </p>
             <button type="button" className="btn-reintentar" onClick={recargarIframe}>
-              🔄 Reintentar Conexión
+              <RefreshCw size={14} />
+              <span>Reintentar Conexión</span>
             </button>
           </div>
         )}

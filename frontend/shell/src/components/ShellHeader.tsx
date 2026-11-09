@@ -5,23 +5,28 @@ import {
   Sparkles,
   BookOpen,
   RefreshCw,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { ModuloActivo, RolUsuario, SesionSso } from '../types/shell';
 
 interface Props {
   sesion: SesionSso;
   moduloActivo: ModuloActivo;
+  modoTest: boolean;
   onCambiarModulo: (mod: ModuloActivo) => void;
   onCambiarRol: (rol: RolUsuario) => void;
   onCerrarSesion: () => void;
+  onToggleModoTest: () => void;
 }
 
 export const ShellHeader: React.FC<Props> = ({
   sesion,
   moduloActivo,
+  modoTest,
   onCambiarModulo,
   onCambiarRol,
   onCerrarSesion,
+  onToggleModoTest,
 }) => {
   const actor = sesion.actor;
 
@@ -42,10 +47,14 @@ export const ShellHeader: React.FC<Props> = ({
             className="shell-escudo-header"
           />
           <div className="shell-titulos">
-            <span className="shell-eyebrow">Plataforma Educativa Distribuida</span>
+            <span className="shell-eyebrow">
+              {modoTest ? 'Plataforma Educativa Distribuida' : 'Sistema de Gestión Escolar'}
+            </span>
             <h1 className="shell-nombre-sistema">Unidad Educativa SIGRA</h1>
             <span className="shell-subtitulo-app">
-              App Shell Orquestador • Keycloak SSO Único • Microfrontends en Vivo
+              {modoTest
+                ? 'App Shell Orquestador • Keycloak SSO Único • Microfrontends en Vivo'
+                : 'Gestión Académica • Asistencia • Seguimiento Estudiantil'}
             </span>
           </div>
         </div>
@@ -67,6 +76,23 @@ export const ShellHeader: React.FC<Props> = ({
               </div>
             </div>
           </div>
+
+          {/* Botón Modo Test (Alterna entre vista institucional limpia y auditoría técnica) */}
+          <button
+            id="btn-toggle-modo-test"
+            type="button"
+            className={`btn-modo-test ${modoTest ? 'activo' : ''}`}
+            onClick={onToggleModoTest}
+            title={
+              modoTest
+                ? 'Modo Test Activo: Se muestran puertos (:4201, :4202), tecnologías y diagnósticos de examen. Clic para ocultar.'
+                : 'Modo Test Inactivo: Vista institucional limpia. Clic para activar diagnósticos y requisitos de evaluación.'
+            }
+          >
+            <SlidersHorizontal size={14} />
+            <span>Modo Test: <strong>{modoTest ? 'ON' : 'OFF'}</strong></span>
+            <span className="indicador-modo-test" aria-hidden="true"></span>
+          </button>
 
           {/* Botón de Alternar Rol Rápido (para defensa de examen) */}
           <button
@@ -105,8 +131,12 @@ export const ShellHeader: React.FC<Props> = ({
           >
             <BookOpen size={18} />
             <div className="tab-texto-block">
-              <strong>Portal Docente (Angular 18)</strong>
-              <small>Asistencia, Justificativos CNN y Calificaciones GraphQL (:4201)</small>
+              <strong>{modoTest ? 'Portal Docente (Angular 18)' : 'Portal Docente'}</strong>
+              <small>
+                {modoTest
+                  ? 'Asistencia, Justificativos CNN y Calificaciones GraphQL (:4201)'
+                  : 'Asistencia de Aula, Calificaciones y Justificativos'}
+              </small>
             </div>
           </button>
 
@@ -118,8 +148,12 @@ export const ShellHeader: React.FC<Props> = ({
           >
             <Sparkles size={18} />
             <div className="tab-texto-block">
-              <strong>Portal de Seguimiento (React PWA)</strong>
-              <small>Riesgo ML, Escáner Facial TF.js, Agente MCP y 5 Reportes (:4202)</small>
+              <strong>{modoTest ? 'Portal de Seguimiento (React PWA)' : 'Portal de Seguimiento'}</strong>
+              <small>
+                {modoTest
+                  ? 'Riesgo ML, Escáner Facial TF.js, Agente MCP y 5 Reportes (:4202)'
+                  : 'Seguimiento Escolar, Alertas y Reportes'}
+              </small>
             </div>
           </button>
 
@@ -132,7 +166,11 @@ export const ShellHeader: React.FC<Props> = ({
             <Shield size={18} />
             <div className="tab-texto-block">
               <strong>Monitor de Seguridad y SSO</strong>
-              <small>Token JWT RS256, Claims y Salud de los 3 Microservicios</small>
+              <small>
+                {modoTest
+                  ? 'Token JWT RS256, Claims y Salud de los 3 Microservicios'
+                  : 'Auditoría Institucional y Control de Accesos'}
+              </small>
             </div>
           </button>
         </div>

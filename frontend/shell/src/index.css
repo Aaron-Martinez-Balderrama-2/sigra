@@ -448,6 +448,53 @@ code, pre {
   font-weight: 700;
 }
 
+.btn-modo-test {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radio-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.btn-modo-test:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.btn-modo-test.activo {
+  background: rgba(212, 175, 55, 0.18);
+  color: var(--colegio-dorado-claro);
+  border: 1px solid var(--colegio-dorado-principal);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.25);
+}
+
+.btn-modo-test.activo:hover {
+  background: rgba(212, 175, 55, 0.28);
+}
+
+.indicador-modo-test {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #64748b;
+  transition: all 0.2s ease;
+}
+
+.btn-modo-test.activo .indicador-modo-test {
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+}
+
 .btn-alternar-rol {
   background: rgba(212, 175, 55, 0.15);
   color: var(--colegio-dorado-claro);

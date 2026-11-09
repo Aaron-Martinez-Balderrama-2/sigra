@@ -17,8 +17,8 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
       <!-- Encabezado -->
       <div class="tarjeta encabezado-saga">
         <div>
-          <span class="subtitulo-saga">Caso de Uso CU-04 (Requisitos RF-06 y RF-07)</span>
-          <h2>🔄 Monitor de Marcas SAGA de Asistencia (Transacción Distribuida)</h2>
+          <span class="subtitulo-saga">{{ auth.modoTest() ? 'Caso de Uso CU-04 (Requisitos RF-06 y RF-07)' : 'Trazabilidad y Consistencia de Asistencia' }}</span>
+          <h2>Monitor de Marcas SAGA de Asistencia (Transacción Distribuida)</h2>
           <p class="texto-saga">
             Evidencia del comportamiento de <code>ms-asistencia</code> (PostgreSQL) como participante en la SAGA Transversal con soporte de idempotencia y reversión por compensación (Rollback).
           </p>
@@ -27,7 +27,7 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
 
       <!-- Diagrama de Pasos SAGA -->
       <div class="tarjeta diagrama-saga">
-        <h3>📍 Pipeline de la Transacción Distribuida SAGA</h3>
+        <h3>Pipeline de la Transacción Distribuida SAGA</h3>
         <div class="pasos-pipeline">
           <div class="paso-caja paso-otro">
             <span class="paso-num">Paso 1</span>

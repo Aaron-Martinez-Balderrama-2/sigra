@@ -40,6 +40,13 @@ export const App: React.FC = () => {
   const [esOnline, setEsOnline] = useState<boolean>(
     typeof navigator !== 'undefined' ? navigator.onLine : true
   );
+  const [modoTest, setModoTest] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('sigra_modo_test') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     try {
@@ -66,6 +73,9 @@ export const App: React.FC = () => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'SIGRA_SSO_SESSION' && event.data?.payload) {
         const p = event.data.payload;
+        if (typeof p.modoTest === 'boolean') {
+          setModoTest(p.modoTest);
+        }
         setSesionSso((prev) => {
           const nuevaSesion: SsoSession = {
             authenticated: true,
@@ -245,7 +255,7 @@ export const App: React.FC = () => {
       {/* Área Principal de Trabajo */}
       <main className="sigra-main">
         {vistaActiva === 'RIESGO' && (
-          <DashboardRiesgo token={sesionSso.token} contexto={ctx} />
+          <DashboardRiesgo token={sesionSso.token} contexto={ctx} modoTest={modoTest} />
         )}
         {vistaActiva === 'CNN' && (
           <EscanerCnnTfjs token={sesionSso.token} contexto={ctx} />

@@ -27,8 +27,8 @@ interface AnalisisImagenResultado {
       <!-- Encabezado -->
       <div class="tarjeta encabezado-seccion">
         <div>
-          <span class="subtitulo-seccion">Caso de Uso CU-03 • Requisito 1.8 (Deep Learning / Visión)</span>
-          <h2>📄 Gestión y Revisión de Justificativos Escolares</h2>
+          <span class="subtitulo-seccion">{{ auth.modoTest() ? 'Caso de Uso CU-03 • Requisito 1.8 (Deep Learning / Visión)' : 'Validación y Aprobación de Licencias Médicas' }}</span>
+          <h2>Gestión y Revisión de Justificativos Escolares</h2>
           <p class="texto-ayuda">
             Recepción de certificados médicos, validación con modelo de Visión CNN y resolución docente con impacto directo en PostgreSQL (asistencia a <code>FALTA_JUSTIFICADA</code>).
           </p>
@@ -47,7 +47,7 @@ interface AnalisisImagenResultado {
         <!-- COLUMNA 1: Formulario de Registro con Análisis Real de Imagen -->
         <div class="tarjeta form-justificativo">
           <div class="tarjeta-titulo">
-            <h3>📝 Registrar Justificativo Escolar</h3>
+            <h3>Registrar Justificativo Escolar</h3>
             <p>Análisis de documento médico con extracción de características de imagen y validación CNN</p>
           </div>
 
@@ -103,7 +103,7 @@ interface AnalisisImagenResultado {
                   [class.btn-seleccionado]="muestraActiva === 'legible'"
                   (click)="cargarMuestra('/ai/muestras/doc_legible_080.png', 'legible')"
                 >
-                  📄 Muestra: Legible (Certificado Nítido)
+                  Muestra: Legible (Certificado Nítido)
                 </button>
                 <button
                   type="button"
@@ -111,10 +111,10 @@ interface AnalisisImagenResultado {
                   [class.btn-seleccionado]="muestraActiva === 'ilegible'"
                   (click)="cargarMuestra('/ai/muestras/doc_ilegible_080.png', 'ilegible')"
                 >
-                  ⚠️ Muestra: Ilegible (Borroso / Incompleto)
+                  Muestra: Ilegible (Borroso / Incompleto)
                 </button>
                 <label class="btn btn-sm btn-outline btn-subir">
-                  📁 Subir Archivo
+                  Subir Archivo
                   <input type="file" accept="image/*" (change)="onArchivoSeleccionado($event)" style="display: none;" />
                 </label>
               </div>

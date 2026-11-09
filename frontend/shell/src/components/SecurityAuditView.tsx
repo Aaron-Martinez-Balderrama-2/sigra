@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Database, Server, CheckCircle2, RefreshCw, KeyRound } from 'lucide-react';
+import { Database, Server, CheckCircle2, RefreshCw, KeyRound, Shield } from 'lucide-react';
 import { SesionSso } from '../types/shell';
 
 interface Props {
   sesion: SesionSso;
+  modoTest?: boolean;
 }
 
 interface ServiceStatus {
@@ -16,7 +17,7 @@ interface ServiceStatus {
   pingMs?: number;
 }
 
-export const SecurityAuditView: React.FC<Props> = ({ sesion }) => {
+export const SecurityAuditView: React.FC<Props> = ({ sesion, modoTest = false }) => {
   const [servicios, setServicios] = useState<ServiceStatus[]>([
     {
       nombre: 'ms-asistencia',
@@ -70,11 +71,18 @@ export const SecurityAuditView: React.FC<Props> = ({ sesion }) => {
       <div className="audit-cabecera">
         <div>
           <span className="audit-subtitulo">
-            Requisitos 2.1, 2.2 y 2.3 — Ecosistema Distribuido y SSO Centralizado
+            {modoTest
+              ? 'Requisitos 2.1, 2.2 y 2.3 — Ecosistema Distribuido y SSO Centralizado'
+              : 'Seguridad Centralizada • Control de Sesión OIDC / JWT'}
           </span>
-          <h2>🛡️ Monitor de Seguridad SSO y Topología de Microservicios</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+            <Shield size={22} className="icono-dorado" />
+            <h2 style={{ margin: 0 }}>Monitor de Seguridad SSO y Topología de Servicios</h2>
+          </div>
           <p className="audit-subtexto">
-            Auditoría en tiempo real del token de autenticación compartida, claims OIDC y estado de los 3 microservicios con sus 3 bases de datos y 3 arquitecturas.
+            {modoTest
+              ? 'Auditoría en tiempo real del token de autenticación compartida, claims OIDC y estado de los 3 microservicios con sus 3 bases de datos y 3 arquitecturas.'
+              : 'Verificación del token de autenticación única (SSO), perfiles de usuario y conectividad de servicios escolares.'}
           </p>
         </div>
         <button
@@ -198,7 +206,7 @@ export const SecurityAuditView: React.FC<Props> = ({ sesion }) => {
 
         <div className="grid-microfrontends-resumen">
           <div className="caja-front-resumen">
-            <span className="front-badge-ang">🅰️ Angular 18</span>
+            <span className="front-badge-ang">Angular 18</span>
             <h4>Portal del Docente (:4201)</h4>
             <p>
               Planilla de Asistencia Escolar, Justificativos con Visión CNN, Calificaciones y SAGA Transversal vía GraphQL.
@@ -207,7 +215,7 @@ export const SecurityAuditView: React.FC<Props> = ({ sesion }) => {
           </div>
 
           <div className="caja-front-resumen">
-            <span className="front-badge-react">⚛️ React 18 + PWA</span>
+            <span className="front-badge-react">React 18 + PWA</span>
             <h4>Portal de Dirección y Seguimiento (:4202)</h4>
             <p>
               Tablero de Riesgo Académico (ML Supervisado/No Supervisado), Escáner Facial TensorFlow.js, Agente MCP y 5 Reportes.

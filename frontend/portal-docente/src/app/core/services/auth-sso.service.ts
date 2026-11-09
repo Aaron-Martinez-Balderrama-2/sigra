@@ -34,6 +34,9 @@ export class AuthSsoService {
   public readonly actor = computed(() => this._sesion().actor);
   public readonly contextoEscolar = computed(() => this._sesion().contextoEscolar);
   public readonly origenSso = computed(() => this._sesion().origenSso);
+  public readonly modoTest = signal<boolean>(
+    typeof window !== 'undefined' && localStorage.getItem('sigra_modo_test') === 'true'
+  );
 
   constructor() {
     this.iniciarOyenteMensajesSso();
@@ -78,6 +81,10 @@ export class AuthSsoService {
           contextoEscolar: payload.contextoEscolar || this._sesion().contextoEscolar,
           origenSso: 'SHELL_POSTMESSAGE',
         };
+
+        if (typeof payload.modoTest === 'boolean') {
+          this.modoTest.set(payload.modoTest);
+        }
 
         this._sesion.set(nuevaSesion);
         try {

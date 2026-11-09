@@ -26,6 +26,7 @@ import {
 interface Props {
   token: string;
   contexto: ContextoEscolar;
+  modoTest?: boolean;
 }
 
 interface LogIdempotencia {
@@ -38,7 +39,7 @@ interface LogIdempotencia {
   mensaje: string;
 }
 
-export const DashboardRiesgo: React.FC<Props> = ({ token, contexto }) => {
+export const DashboardRiesgo: React.FC<Props> = ({ token, contexto, modoTest = false }) => {
   const [saludRiesgo, setSaludRiesgo] = useState<{
     online: boolean;
     database?: string;
@@ -258,39 +259,47 @@ export const DashboardRiesgo: React.FC<Props> = ({ token, contexto }) => {
       {/* Franja Continua de Indicadores Operativos */}
       <section className="kpi-strip" aria-label="Indicadores del servicio de riesgo">
         <div className="kpi-cell">
-          <span className="kpi-label">Estado del Microservicio</span>
+          <span className="kpi-label">{modoTest ? 'Estado del Microservicio' : 'Estado del Servicio'}</span>
           <div className="kpi-value-row">
             <span
               className={`badge ${saludRiesgo.online ? 'badge-bajo' : 'badge-alto'}`}
               data-testid="status-ms-riesgo"
             >
               <span className={`status-dot ${saludRiesgo.online ? 'online' : 'offline'}`} />
-              {saludRiesgo.online ? 'ms-riesgo CONECTADO' : 'ms-riesgo SIN CONEXIÓN'}
+              {saludRiesgo.online
+                ? (modoTest ? 'ms-riesgo CONECTADO' : 'Servicio Conectado')
+                : (modoTest ? 'ms-riesgo SIN CONEXIÓN' : 'Sin Conexión')}
             </span>
             <button
               type="button"
               className="btn btn-outline btn-sm"
               onClick={() => void cargarDatosIniciales(estudianteSeleccionado)}
-              title="Sincronizar con DynamoDB Local"
+              title={modoTest ? 'Sincronizar con DynamoDB Local (:8000)' : 'Sincronizar datos'}
             >
               <RefreshCw /> Sincronizar
             </button>
           </div>
-          <span className="kpi-meta">Laravel 11 · Arquitectura DDD (:8001)</span>
+          <span className="kpi-meta">
+            {modoTest ? 'Laravel 11 · Arquitectura DDD (:8001)' : 'Módulo de Alerta Temprana'}
+          </span>
         </div>
 
         <div className="kpi-cell">
-          <span className="kpi-label">Persistencia y Eventos</span>
-          <div className="kpi-value">DynamoDB + n8n</div>
-          <span className="kpi-meta">Clave-Valor (:8000) y Webhook Reactivo</span>
+          <span className="kpi-label">{modoTest ? 'Persistencia y Eventos' : 'Persistencia de Datos'}</span>
+          <div className="kpi-value">{modoTest ? 'DynamoDB + n8n' : 'Registro de Auditoría'}</div>
+          <span className="kpi-meta">
+            {modoTest ? 'Clave-Valor (:8000) y Webhook Reactivo' : 'Eventos y Alertas en Tiempo Real'}
+          </span>
         </div>
 
         <div className="kpi-cell">
-          <span className="kpi-label">Exactitud Random Forest</span>
+          <span className="kpi-label">{modoTest ? 'Exactitud Random Forest' : 'Precisión Predictiva'}</span>
           <div className="kpi-value">
             {metricasMl?.random_forest.accuracy_porcentaje ?? '100.00%'}
           </div>
-          <span className="kpi-meta">Clasificador supervisado de alerta temprana</span>
+          <span className="kpi-meta">
+            {modoTest ? 'Clasificador supervisado de alerta temprana' : 'Modelo analítico de rendimiento escolar'}
+          </span>
         </div>
 
         <div className="kpi-cell">
