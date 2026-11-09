@@ -83,17 +83,25 @@ export const EscanerCnnTfjs: React.FC<Props> = ({ token, contexto }) => {
         video: { width: 320, height: 240, facingMode: 'environment' },
       });
       streamRef.current = mediaStream;
+      // El <video> se monta recién en el siguiente render (camaraActiva=true);
+      // el stream se conecta en el useEffect de abajo, no aquí (videoRef aún es null).
       setCamaraActiva(true);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        await videoRef.current.play();
-      }
     } catch (err) {
       setErrorMsg(
         `Cámara web no disponible (${(err as Error).message}). Utilice una muestra precargada o suba un archivo.`
       );
     }
   };
+
+  // Conecta el MediaStream al <video> una vez que React lo montó en el DOM.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!camaraActiva || !video || !streamRef.current) return;
+    video.srcObject = streamRef.current;
+    video.play().catch((err) => {
+      setErrorMsg(`No se pudo reproducir la cámara: ${(err as Error).message}`);
+    });
+  }, [camaraActiva]);
 
   const detenerCamara = () => {
     if (streamRef.current) {
@@ -142,6 +150,10 @@ export const EscanerCnnTfjs: React.FC<Props> = ({ token, contexto }) => {
 
   const capturarFotogramaCamara = async () => {
     if (!videoRef.current) return;
+    if (videoRef.current.readyState < 2 || videoRef.current.videoWidth === 0) {
+      setErrorMsg('La cámara aún no entrega imagen. Espere un segundo y vuelva a capturar.');
+      return;
+    }
     setProcesando(true);
     setErrorMsg('');
     try {
@@ -297,6 +309,7 @@ export const EscanerCnnTfjs: React.FC<Props> = ({ token, contexto }) => {
                 type="button"
                 className="btn btn-outline btn-sm"
                 onClick={() => void iniciarCamara()}
+                data-testid="btn-iniciar-camara"
               >
                 <Camera /> Cámara Web
               </button>
@@ -305,6 +318,7 @@ export const EscanerCnnTfjs: React.FC<Props> = ({ token, contexto }) => {
                 type="button"
                 className="btn btn-outline btn-sm"
                 onClick={() => detenerCamara()}
+                data-testid="btn-detener-camara"
               >
                 <CameraOff /> Detener Cámara
               </button>
@@ -334,6 +348,7 @@ export const EscanerCnnTfjs: React.FC<Props> = ({ token, contexto }) => {
                   type="button"
                   className="btn btn-dorado btn-sm"
                   onClick={() => void capturarFotogramaCamara()}
+                  data-testid="btn-capturar-camara"
                 >
                   <Camera /> Capturar y Evaluar Fotograma
                 </button>

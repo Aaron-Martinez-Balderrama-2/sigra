@@ -121,6 +121,7 @@ export const MicrofrontendFrame: React.FC<Props> = ({
             setErrorCarga(true);
           }}
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+          allow="camera; microphone; clipboard-write"
         />
 
         {errorCarga && (
