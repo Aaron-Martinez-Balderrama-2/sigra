@@ -1,0 +1,137 @@
+{
+  "name": "SIGRA - Workflow de Notificación de Alertas Escolares",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alerta-riesgo",
+        "options": {}
+      },
+      "name": "Webhook Alerta SIGRA",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "id": "11111111-2222-3333-4444-555555555551"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "estudianteNombre",
+              "value": "={{ $json.body.estudianteNombre || 'Estudiante Demo' }}"
+            },
+            {
+              "name": "curso",
+              "value": "={{ $json.body.curso || '3.° B de Secundaria' }}"
+            },
+            {
+              "name": "motivoRiesgo",
+              "value": "={{ $json.body.motivo || 'Bajo rendimiento académico y ausencias reiteradas' }}"
+            },
+            {
+              "name": "nivelRiesgo",
+              "value": "={{ $json.body.nivelRiesgo || 'ALTO' }}"
+            },
+            {
+              "name": "destinatario",
+              "value": "={{ $json.body.emailDocente || 'docente@sigra.edu.bo' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Formatear Mensaje Institucional",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [460, 300],
+      "id": "11111111-2222-3333-4444-555555555552"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.nivelRiesgo }}",
+              "operation": "equal",
+              "value2": "ALTO"
+            }
+          ]
+        }
+      },
+      "name": "¿Riesgo Alto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300],
+      "id": "11111111-2222-3333-4444-555555555553"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"resultado\": \"NOTIFICACION_PRIORITARIA_ENVIADA\",\n  \"estudiante\": \"{{ $json.estudianteNombre }}\",\n  \"canal\": \"Email Institucional + Telegram Coordinacion\",\n  \"fecha\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "name": "Notificación Prioritaria Enviada",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [920, 200],
+      "id": "11111111-2222-3333-4444-555555555554"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"resultado\": \"REGISTRADO_EN_BITACORA\",\n  \"estudiante\": \"{{ $json.estudianteNombre }}\",\n  \"canal\": \"Dashboard Director\",\n  \"fecha\": \"{{ $now.toISO() }}\"\n}",
+        "options": {}
+      },
+      "name": "Registro Ordinario en Bitácora",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [920, 400],
+      "id": "11111111-2222-3333-4444-555555555555"
+    }
+  ],
+  "connections": {
+    "Webhook Alerta SIGRA": {
+      "main": [
+        [
+          {
+            "node": "Formatear Mensaje Institucional",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear Mensaje Institucional": {
+      "main": [
+        [
+          {
+            "node": "¿Riesgo Alto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Riesgo Alto?": {
+      "main": [
+        [
+          {
+            "node": "Notificación Prioritaria Enviada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registro Ordinario en Bitácora",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {}
+}

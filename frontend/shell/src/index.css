@@ -1,0 +1,986 @@
+:root {
+  --colegio-azul-oscuro: #0f2347;
+  --colegio-azul-medio: #162f5d;
+  --colegio-azul-claro: #eff6ff;
+  --colegio-dorado-principal: #d4af37;
+  --colegio-dorado-hover: #b89728;
+  --colegio-dorado-claro: #fef08a;
+  --colegio-rojo-principal: #b91c1c;
+
+  --bg-pagina: #f1f5f9;
+  --bg-tarjeta: #ffffff;
+  --texto-principal: #0f172a;
+  --texto-secundario: #475569;
+  --texto-suave: #94a3b8;
+  --borde-suave: #e2e8f0;
+
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+  --radio-full: 9999px;
+
+  --sombra-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --sombra-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --sombra-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-pagina);
+  color: var(--texto-principal);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, pre {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ============================================================================
+   PANTALLA DE LOGIN INSTITUCIONAL SSO
+   ============================================================================ */
+.login-pantalla-fondo {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 20%, #1e3a6d 0%, #0a1733 100%);
+  padding: 1.5rem;
+}
+
+.login-tarjeta-contenedor {
+  background: #ffffff;
+  max-width: 620px;
+  width: 100%;
+  border-radius: var(--radio-lg);
+  padding: 2.25rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-escudo-box {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+.login-escudo {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 3px solid var(--colegio-dorado-principal);
+  object-fit: cover;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+.login-subtitulo-institucion {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  color: var(--colegio-azul-medio);
+  display: block;
+}
+
+.login-titulo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--colegio-azul-oscuro);
+  margin: 0.25rem 0 0.5rem;
+}
+
+.login-descripcion {
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+}
+
+.keycloak-badge-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radio-md);
+  font-size: 0.8rem;
+  margin-bottom: 1.25rem;
+}
+
+.kc-activo {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.kc-local {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.login-alerta-error {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radio-md);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+/* Acceso Rápido por Perfil */
+.seccion-acceso-rapido {
+  margin-bottom: 1.25rem;
+}
+
+.etiqueta-seccion {
+  font-size: 0.8rem;
+  color: var(--texto-principal);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.grid-perfiles-demo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+
+@media (max-width: 600px) {
+  .grid-perfiles-demo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btn-perfil-demo {
+  background: #f8fafc;
+  border: 1.5px solid var(--borde-suave);
+  border-radius: var(--radio-md);
+  padding: 0.75rem 0.65rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.btn-perfil-demo:hover {
+  background: #eff6ff;
+  border-color: var(--colegio-azul-medio);
+}
+
+.btn-perfil-demo.perfil-activo {
+  background: #fefce8;
+  border-color: var(--colegio-dorado-principal);
+  box-shadow: 0 0 0 2px var(--colegio-dorado-principal);
+}
+
+.demo-rol-titulo {
+  font-size: 0.825rem;
+  font-weight: 800;
+  color: var(--colegio-azul-oscuro);
+}
+
+.demo-rol-nombre {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.demo-rol-permisos {
+  font-size: 0.65rem;
+  color: var(--texto-suave);
+  line-height: 1.2;
+}
+
+.divisor-o {
+  text-align: center;
+  position: relative;
+  margin: 1.25rem 0;
+}
+
+.divisor-o::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--borde-suave);
+}
+
+.divisor-o span {
+  position: relative;
+  background: #ffffff;
+  padding: 0 0.75rem;
+  font-size: 0.75rem;
+  color: var(--texto-suave);
+}
+
+/* Formulario */
+.login-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.login-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.login-campo label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.input-con-icono {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icono-campo {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--texto-suave);
+}
+
+.input-con-icono input {
+  width: 100%;
+  padding: 0.6rem 0.75rem 0.6rem 2.4rem;
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-md);
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.input-con-icono input:focus {
+  outline: none;
+  border-color: var(--colegio-azul-medio);
+  box-shadow: 0 0 0 3px rgba(22, 47, 93, 0.15);
+}
+
+.btn-iniciar-sesion {
+  background: var(--colegio-azul-oscuro);
+  color: #ffffff;
+  padding: 0.75rem;
+  border-radius: var(--radio-md);
+  border: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-iniciar-sesion:hover {
+  background: var(--colegio-azul-medio);
+}
+
+.btn-iniciar-sesion:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-footer-info {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--borde-suave);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--texto-secundario);
+}
+
+.icono-check {
+  color: #10b981;
+}
+
+/* ============================================================================
+   LAYOUT DEL SHELL
+   ============================================================================ */
+.shell-layout-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-pagina);
+}
+
+.shell-header-institucional {
+  background-color: var(--colegio-azul-oscuro);
+  color: #ffffff;
+  box-shadow: var(--sombra-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.shell-header-top {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.shell-marca-colegio {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.shell-escudo-header {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--colegio-dorado-principal);
+  object-fit: cover;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+.shell-titulos {
+  display: flex;
+  flex-direction: column;
+}
+
+.shell-eyebrow {
+  font-size: 0.675rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  color: var(--colegio-dorado-claro);
+}
+
+.shell-nombre-sistema {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.shell-subtitulo-app {
+  font-size: 0.7rem;
+  color: #cbd5e1;
+}
+
+.shell-usuario-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.shell-usuario-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radio-full);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.shell-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--colegio-dorado-principal);
+  color: var(--colegio-azul-oscuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.shell-usuario-datos {
+  display: flex;
+  flex-direction: column;
+}
+
+.shell-usuario-nombre {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.shell-usuario-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.675rem;
+  color: #94a3b8;
+}
+
+.shell-rol-tag {
+  color: var(--colegio-dorado-claro);
+  font-weight: 700;
+}
+
+.btn-alternar-rol {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--colegio-dorado-claro);
+  border: 1px solid var(--colegio-dorado-principal);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radio-md);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s;
+}
+
+.btn-alternar-rol:hover {
+  background: var(--colegio-dorado-principal);
+  color: var(--colegio-azul-oscuro);
+}
+
+.btn-shell-salir {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radio-md);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s;
+}
+
+.btn-shell-salir:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+/* Pestañas del Shell */
+.shell-nav-tabs {
+  background-color: var(--colegio-azul-medio);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shell-tabs-contenedor {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  padding: 0 1.5rem;
+  overflow-x: auto;
+}
+
+.shell-tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 0.75rem 1.25rem;
+  color: #cbd5e1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: left;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.shell-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.shell-tab-btn.tab-activa {
+  color: var(--colegio-dorado-claro);
+  border-bottom-color: var(--colegio-dorado-principal);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.tab-texto-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-texto-block strong {
+  font-size: 0.85rem;
+}
+
+.tab-texto-block small {
+  font-size: 0.675rem;
+  color: #94a3b8;
+}
+
+/* ============================================================================
+   CONTENEDOR DE MICROFRONTENDS (IFRAME INTEGRADO)
+   ============================================================================ */
+.shell-contenido-principal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell-frame-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell-frame-toolbar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--borde-suave);
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.frame-info-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.8rem;
+}
+
+.badge-puerto {
+  background: #0f172a;
+  color: #38bdf8;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badge-sso-sync {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 2px 6px;
+  border-radius: var(--radio-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.frame-acciones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-toolbar-accion {
+  background: #f8fafc;
+  border: 1px solid var(--borde-suave);
+  color: #334155;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radio-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+}
+
+.btn-toolbar-accion:hover {
+  background: #eff6ff;
+  border-color: var(--colegio-azul-medio);
+}
+
+.shell-iframe-container {
+  flex: 1;
+  min-height: calc(100vh - 180px);
+  position: relative;
+  background: #f8fafc;
+}
+
+.shell-microfrontend-iframe {
+  width: 100%;
+  height: 100%;
+  min-height: calc(100vh - 180px);
+  border: none;
+  display: block;
+}
+
+.shell-iframe-loader {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--colegio-azul-oscuro);
+  z-index: 10;
+}
+
+.loader-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(22, 47, 93, 0.2);
+  border-top-color: var(--colegio-azul-medio);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.anim-girar {
+  animation: spin 1s linear infinite;
+}
+
+.shell-iframe-error-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: var(--radio-lg);
+  border: 1px solid #fecdd3;
+  text-align: center;
+  max-width: 440px;
+  box-shadow: var(--sombra-md);
+}
+
+.icono-alerta {
+  color: #e11d48;
+  margin-bottom: 0.75rem;
+}
+
+.btn-reintentar {
+  margin-top: 1rem;
+  background: var(--colegio-azul-medio);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ============================================================================
+   MONITOR DE SEGURIDAD Y AUDITORÍA SSO
+   ============================================================================ */
+.audit-contenedor {
+  max-width: 1280px;
+  margin: 1.5rem auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.audit-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: #ffffff;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radio-lg);
+  border: 1px solid var(--borde-suave);
+  border-left: 6px solid var(--colegio-dorado-principal);
+}
+
+.audit-subtitulo {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--colegio-azul-medio);
+  text-transform: uppercase;
+}
+
+.audit-cabecera h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin: 0.25rem 0;
+  color: var(--colegio-azul-oscuro);
+}
+
+.audit-subtexto {
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+}
+
+.btn-auditar-red {
+  background: var(--colegio-azul-medio);
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radio-md);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.grid-audit-dos-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .grid-audit-dos-columnas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tarjeta-audit {
+  background: #ffffff;
+  border-radius: var(--radio-lg);
+  border: 1px solid var(--borde-suave);
+  padding: 1.25rem;
+  box-shadow: var(--sombra-sm);
+}
+
+.tarjeta-audit-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.icono-dorado {
+  color: var(--colegio-dorado-principal);
+}
+
+.tarjeta-audit-titulo h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--colegio-azul-oscuro);
+}
+
+.tarjeta-audit-titulo p {
+  font-size: 0.75rem;
+  color: var(--texto-secundario);
+}
+
+.campos-token-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.campo-token-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.token-label {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+}
+
+.token-valor {
+  background: #f1f5f9;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radio-sm);
+  font-size: 0.8rem;
+  color: #0f172a;
+}
+
+.token-valor-texto {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.roles-tags-container {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.badge-rol-audit {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 2px 8px;
+  border-radius: var(--radio-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.token-raw-box {
+  background: #0f172a;
+  color: #a5f3fc;
+  padding: 0.65rem;
+  border-radius: var(--radio-md);
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
+.lista-servicios-audit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tarjeta-servicio-fila {
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-md);
+  padding: 0.75rem;
+  background: #f8fafc;
+}
+
+.servicio-fila-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.servicio-nombre {
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.servicio-puerto {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-left: 0.35rem;
+}
+
+.badge-online {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 2px 8px;
+  border-radius: var(--radio-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.servicio-detalles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.servicio-detalles-grid small {
+  color: #64748b;
+}
+
+.detalle-dato {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.arquitectura-nombre {
+  color: var(--colegio-azul-medio);
+}
+
+.grid-microfrontends-resumen {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .grid-microfrontends-resumen {
+    grid-template-columns: 1fr;
+  }
+}
+
+.caja-front-resumen {
+  border: 1px solid var(--borde-suave);
+  padding: 1rem;
+  border-radius: var(--radio-md);
+  background: #f8fafc;
+}
+
+.front-badge-ang {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 800;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.front-badge-react {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 800;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.caja-front-resumen h4 {
+  margin: 0.4rem 0 0.2rem;
+  font-size: 0.95rem;
+}
+
+.caja-front-resumen p {
+  font-size: 0.8rem;
+  color: var(--texto-secundario);
+}
+
+.front-meta {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Footer */
+.shell-footer-institucional {
+  background: #0f172a;
+  color: #94a3b8;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.775rem;
+  border-top: 1px solid var(--borde-suave);
+}
