@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/v1/asistencia/marcas")
+@CrossOrigin(origins = "*", exposedHeaders = {"X-Idempotent-Replay"})
 public class MarcaSeguimientoController {
 
     private final GestionarMarcaSagaUseCase gestionarMarcaUseCase;

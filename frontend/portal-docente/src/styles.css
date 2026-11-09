@@ -1,0 +1,215 @@
+/* ============================================================================
+   UNIDAD EDUCATIVA SIGRA — ESTILOS GLOBALES E IDENTIDAD INSTITUCIONAL
+   ============================================================================ */
+
+:root {
+  /* Paleta Oficial del Colegio */
+  --colegio-azul-oscuro: #0B2545;     /* Cabeceras, encabezados de tabla (thead) y barra superior */
+  --colegio-azul-medio: #134074;      /* Botones secundarios, filtros y tarjetas activas */
+  --colegio-azul-claro: #EEF4ED;      /* Fondo de filas seleccionadas y paneles suaves */
+
+  --colegio-rojo-principal: #C81D25;  /* Estado FALTA, alerta < 85%, botón de simular compensación */
+  --colegio-rojo-hover: #9E141B;
+
+  --colegio-dorado-principal: #D4AF37;/* Botones principales (Guardar Asistencia, Idempotencia), bordes activos */
+  --colegio-dorado-claro: #F4B942;    /* Estado ATRASO, cola Offline pendiente */
+
+  --verde-exito: #15803D;             /* Estado PRESENTE, sincronización exitosa */
+  --bg-pagina: #F8FAFC;
+  --bg-tarjeta: #FFFFFF;
+  --texto-principal: #1E293B;
+  --texto-secundario: #64748B;
+  --borde-suave: #E2E8F0;
+
+  --sombra-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --sombra-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --sombra-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  --radio-md: 8px;
+  --radio-lg: 12px;
+  --radio-full: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-pagina);
+  color: var(--texto-principal);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Tipografía Escolar */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: var(--colegio-azul-oscuro);
+  line-height: 1.25;
+}
+
+/* Badges de Estado de Asistencia */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: var(--radio-full);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.badge-presente {
+  background-color: #DCFCE7;
+  color: #14532D;
+  border: 1px solid #86EFAC;
+}
+
+.badge-falta {
+  background-color: #FEE2E2;
+  color: #7F1D1D;
+  border: 1px solid #FCA5A5;
+}
+
+.badge-atraso {
+  background-color: #FEF3C7;
+  color: #78350F;
+  border: 1px solid #FCD34D;
+}
+
+.badge-justificada {
+  background-color: #E0E7FF;
+  color: #312E81;
+  border: 1px solid #A5B4FC;
+}
+
+.badge-riesgo {
+  background-color: #FEE2E2;
+  color: var(--colegio-rojo-principal);
+  border: 1px solid #F87171;
+  animation: pulso-suave 2s infinite;
+}
+
+@keyframes pulso-suave {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+/* Botones Institucionales */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radio-md);
+  box-shadow: var(--sombra-sm);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-dorado {
+  background-color: var(--colegio-dorado-principal);
+  color: #2D2200;
+  font-weight: 700;
+}
+.btn-dorado:hover:not(:disabled) {
+  background-color: #C59F29;
+}
+
+.btn-azul {
+  background-color: var(--colegio-azul-oscuro);
+  color: #FFFFFF;
+}
+.btn-azul:hover:not(:disabled) {
+  background-color: var(--colegio-azul-medio);
+}
+
+.btn-rojo {
+  background-color: var(--colegio-rojo-principal);
+  color: #FFFFFF;
+}
+.btn-rojo:hover:not(:disabled) {
+  background-color: var(--colegio-rojo-hover);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--borde-suave);
+  color: var(--texto-principal);
+}
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--colegio-azul-claro);
+  border-color: var(--colegio-azul-medio);
+}
+
+/* Tarjetas */
+.tarjeta {
+  background: var(--bg-tarjeta);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+  padding: 1.25rem;
+}
+
+/* Tablas */
+.tabla-sigra {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--bg-tarjeta);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+}
+
+.tabla-sigra thead {
+  background-color: var(--colegio-azul-oscuro);
+  color: #FFFFFF;
+}
+
+.tabla-sigra th {
+  padding: 0.85rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: left;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tabla-sigra td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--borde-suave);
+  font-size: 0.875rem;
+}
+
+.tabla-sigra tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla-sigra tbody tr:hover {
+  background-color: #F1F5F9;
+}
+

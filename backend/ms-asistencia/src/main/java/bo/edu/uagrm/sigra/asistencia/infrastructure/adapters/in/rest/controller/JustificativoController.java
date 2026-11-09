@@ -19,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/asistencia/justificativos")
+@CrossOrigin(origins = "*", exposedHeaders = {"X-Idempotent-Replay"})
 public class JustificativoController {
 
     private final GestionarJustificativoUseCase gestionarJustificativoUseCase;

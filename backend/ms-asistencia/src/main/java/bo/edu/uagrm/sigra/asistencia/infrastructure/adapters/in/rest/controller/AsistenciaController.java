@@ -24,6 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/asistencia")
+@CrossOrigin(origins = "*", exposedHeaders = {"X-Idempotent-Replay"})
 public class AsistenciaController {
 
     private final RegistrarAsistenciaUseCase registrarUseCase;
