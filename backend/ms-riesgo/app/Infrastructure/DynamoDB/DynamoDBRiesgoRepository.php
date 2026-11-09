@@ -93,6 +93,7 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
             $this->tablasVerificadas = true;
         } catch (\Throwable $e) {
             Log::warning("Aviso al verificar tablas DynamoDB Local: " . $e->getMessage());
+            $this->tablasVerificadas = true;
         }
     }
 

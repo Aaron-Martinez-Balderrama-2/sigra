@@ -25,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
                     'key' => $config['credentials']['key'] ?? 'fakeMyKeyId',
                     'secret' => $config['credentials']['secret'] ?? 'fakeSecretAccessKey',
                 ],
+                'http' => [
+                    'connect_timeout' => 1.0,
+                    'timeout' => 2.0,
+                ],
             ]);
         });
 

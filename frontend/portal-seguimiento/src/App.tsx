@@ -134,9 +134,10 @@ export const App: React.FC = () => {
   };
 
   const ctx = sesionSso.contextoEscolar;
+  const esEmbebido = typeof window !== 'undefined' && window.self !== window.top;
 
   return (
-    <div className="sigra-app">
+    <div className={`sigra-app ${esEmbebido ? 'modo-embebido' : ''}`}>
       {/* Cabecera Institucional Unificada y Limpia */}
       <header className="sigra-header">
         <div className="sigra-header-inner">
@@ -212,16 +213,18 @@ export const App: React.FC = () => {
               </span>
             </div>
 
-            <button
-              type="button"
-              className="btn-header-role"
-              onClick={alternarPerfilDemo}
-              data-testid="btn-alternar-rol-sso"
-              title="Alternar perfil activo de demostración SSO"
-            >
-              <ArrowLeftRight />
-              <span>{sesionSso.actor.sub}</span>
-            </button>
+            {!esEmbebido && (
+              <button
+                type="button"
+                className="btn-header-role"
+                onClick={alternarPerfilDemo}
+                data-testid="btn-alternar-rol-sso"
+                title="Alternar perfil activo de demostración SSO"
+              >
+                <ArrowLeftRight />
+                <span>{sesionSso.actor.sub}</span>
+              </button>
+            )}
           </div>
         </div>
       </header>

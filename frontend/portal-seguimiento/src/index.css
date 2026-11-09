@@ -195,9 +195,10 @@ pre {
 .sigra-nav-tabs {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
+  justify-content: flex-start;
+  gap: 0.35rem;
   min-width: 0;
+  flex-wrap: nowrap;
 }
 
 .nav-tab-btn {
@@ -215,7 +216,7 @@ pre {
   gap: 0.4rem;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   white-space: nowrap;
-  min-width: 0;
+  flex-shrink: 0;
 }
 
 .nav-tab-btn:hover {
@@ -265,6 +266,14 @@ pre {
   height: 0.48rem;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+.modo-embebido .btn-header-role {
+  display: none !important;
+}
+
+.modo-embebido .sigra-sso-bar {
+  gap: 0.35rem;
 }
 
 .status-dot.online {
