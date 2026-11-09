@@ -10,7 +10,7 @@ import { NetworkStatusService } from './core/services/network-status.service';
   imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive],
   template: `
     <div class="sigra-shell-layout" [class.modo-embebido]="esEmbebido">
-      <!-- Barra Superior Institucional (1 Sola Fila Unificada, Idéntica en Estructura a React) -->
+      <!-- Barra Superior Institucional (1:1 en Altura, Tipografía y Proporciones con React) -->
       <header class="header-institucional">
         <div class="contenedor-header-unificado">
           <!-- 1. Identidad Institucional Compacta -->
@@ -26,39 +26,58 @@ import { NetworkStatusService } from './core/services/network-status.service';
             </div>
           </div>
 
-          <!-- 2. Pestañas de Navegación Compactas y Centradas (Sin Desbordes) -->
+          <!-- 2. Pestañas de Navegación con Iconografía SVG Vectorial (Idénticas a React) -->
           <nav class="nav-pestanas-inline" aria-label="Módulos del Docente">
             <a
               routerLink="/asistencia"
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              📋 Asistencia
+              <svg class="icono-tab" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+              </svg>
+              <span>Asistencia</span>
             </a>
             <a
               routerLink="/calificaciones"
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              📝 Calificaciones
+              <svg class="icono-tab" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              <span>Calificaciones</span>
             </a>
             <a
               routerLink="/justificativos"
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              📄 Justificativos
+              <svg class="icono-tab" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              <span>Justificativos</span>
             </a>
             <a
               routerLink="/saga-marcas"
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              🔄 Marcas SAGA
+              <svg class="icono-tab" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"/>
+                <polyline points="1 20 1 14 7 14"/>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+              </svg>
+              <span>Marcas SAGA</span>
             </a>
           </nav>
 
-          <!-- 3. Acciones de Red y Estado SSO -->
+          <!-- 3. Acciones de Red y Estado SSO con Dot CSS e Iconografía Vectorial -->
           <div class="header-acciones">
             <!-- Indicador de Red en Vivo -->
             <div
@@ -66,8 +85,8 @@ import { NetworkStatusService } from './core/services/network-status.service';
               [class.badge-red-online]="network.estaOnline()"
               [class.badge-red-offline]="!network.estaOnline()"
             >
-              <span class="punto-estado"></span>
-              {{ network.estaOnline() ? '🟢 Conectado' : '🟡 Offline' }}
+              <span class="punto-estado" [class.punto-online]="network.estaOnline()" [class.punto-offline]="!network.estaOnline()"></span>
+              <span>{{ network.estaOnline() ? 'Conectado' : 'Offline' }}</span>
             </div>
 
             <!-- Botón de Simulación de Corte -->
@@ -77,7 +96,14 @@ import { NetworkStatusService } from './core/services/network-status.service';
               (click)="network.alternarSimulacionCorte()"
               title="Simula desconexión de red para probar la cola local en IndexedDB"
             >
-              {{ network.simularCorteRed() ? '🔌 Restaurar' : '✂️ Simular Corte en Aula' }}
+              <svg class="icono-tab" viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="6" cy="6" r="3"/>
+                <circle cx="6" cy="18" r="3"/>
+                <line x1="20" y1="4" x2="8.12" y2="15.88"/>
+                <line x1="14.47" y1="14.48" x2="20" y2="20"/>
+                <line x1="8.12" y1="8.12" x2="12" y2="12"/>
+              </svg>
+              <span>{{ network.simularCorteRed() ? 'Restaurar' : 'Simular Corte en Aula' }}</span>
             </button>
 
             <!-- Datos del Docente (visible cuando corre independiente en :4201) -->
@@ -96,7 +122,7 @@ import { NetworkStatusService } from './core/services/network-status.service';
         </div>
       </header>
 
-      <!-- Contenedor Principal de la Vista con Ancho Fluido -->
+      <!-- Contenedor Principal de la Vista -->
       <main class="contenido-principal">
         <router-outlet></router-outlet>
       </main>
@@ -151,6 +177,7 @@ import { NetworkStatusService } from './core/services/network-status.service';
         align-items: center;
         gap: 0.65rem;
         min-width: 0;
+        line-height: normal;
       }
 
       .escudo-institucional {
@@ -168,6 +195,7 @@ import { NetworkStatusService } from './core/services/network-status.service';
         display: flex;
         flex-direction: column;
         justify-content: center;
+        line-height: normal;
       }
 
       .subtitulo-institucion {
@@ -194,12 +222,12 @@ import { NetworkStatusService } from './core/services/network-status.service';
         margin: 0;
       }
 
-      /* Pestañas inline en la misma fila central sin scrollbars */
+      /* Pestañas inline en la misma fila central sin scrollbars, altura 29px idéntica a React */
       .nav-pestanas-inline {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.35rem;
+        gap: 0.25rem;
         min-width: 0;
       }
 
@@ -215,11 +243,13 @@ import { NetworkStatusService } from './core/services/network-status.service';
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.35rem;
+        gap: 0.4rem;
+        line-height: normal;
         transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         white-space: nowrap;
         text-decoration: none;
         min-width: 0;
+        box-sizing: border-box;
       }
 
       .pestana:hover {
@@ -235,12 +265,21 @@ import { NetworkStatusService } from './core/services/network-status.service';
         box-shadow: inset 0 -2px 0 var(--colegio-dorado-principal);
       }
 
+      .icono-tab {
+        width: 1.05em;
+        height: 1.05em;
+        flex-shrink: 0;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
       .header-acciones {
         display: flex;
         align-items: center;
         justify-content: flex-end;
         gap: 0.45rem;
         min-width: 0;
+        line-height: normal;
       }
 
       .badge-red {
@@ -252,20 +291,28 @@ import { NetworkStatusService } from './core/services/network-status.service';
         color: rgba(255, 255, 255, 0.92);
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
+        gap: 0.4rem;
         white-space: nowrap;
+        line-height: normal;
+        box-sizing: border-box;
       }
 
-      .badge-red-online {
-        background: rgba(21, 128, 61, 0.2);
-        color: #86efac;
-        border: 1px solid rgba(134, 239, 172, 0.4);
+      .punto-estado {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
       }
 
-      .badge-red-offline {
-        background: rgba(244, 185, 66, 0.25);
-        color: #fde047;
-        border: 1px solid rgba(253, 224, 71, 0.5);
+      .punto-online {
+        background-color: #22c55e;
+        box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+      }
+
+      .punto-offline {
+        background-color: #f59e0b;
+        box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
       }
 
       .btn-toggle-red {
@@ -278,7 +325,12 @@ import { NetworkStatusService } from './core/services/network-status.service';
         font-weight: 500;
         cursor: pointer;
         white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        line-height: normal;
         transition: all 0.15s ease;
+        box-sizing: border-box;
       }
 
       .btn-toggle-red:hover {
@@ -298,6 +350,7 @@ import { NetworkStatusService } from './core/services/network-status.service';
         padding: 0.22rem 0.55rem;
         border-radius: var(--radius-sm, 6px);
         border: 1px solid rgba(255, 255, 255, 0.15);
+        line-height: normal;
       }
 
       .docente-avatar {
