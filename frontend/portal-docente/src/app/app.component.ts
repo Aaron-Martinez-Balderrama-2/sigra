@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+﻿import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthSsoService } from './core/services/auth-sso.service';
@@ -69,7 +69,14 @@ import { NetworkStatusService } from './core/services/network-status.service';
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              📋 Planilla de Asistencia (CU-01 / CU-02)
+              📋 Asistencia (CU-01 / CU-02)
+            </a>
+            <a
+              routerLink="/calificaciones"
+              routerLinkActive="pestana-activa"
+              class="pestana"
+            >
+              📝 Calificaciones y SAGA (GraphQL / NestJS)
             </a>
             <a
               routerLink="/justificativos"
@@ -83,7 +90,7 @@ import { NetworkStatusService } from './core/services/network-status.service';
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              🔄 Marcas SAGA de Asistencia (CU-04)
+              🔄 Monitor Marcas SAGA (CU-04)
             </a>
           </div>
         </nav>

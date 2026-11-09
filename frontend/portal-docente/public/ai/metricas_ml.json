@@ -1,0 +1,134 @@
+{
+  "random_forest": {
+    "modelo": "RandomForestClassifier",
+    "accuracy": 1.0,
+    "accuracy_porcentaje": "100.00%",
+    "clases": [
+      "BAJO",
+      "MEDIO",
+      "ALTO"
+    ],
+    "matriz_confusion": [
+      [
+        41,
+        0,
+        0
+      ],
+      [
+        0,
+        40,
+        0
+      ],
+      [
+        0,
+        0,
+        119
+      ]
+    ],
+    "importancia_variables": {
+      "promedio_notas": 0.3343,
+      "porcentaje_asistencia": 0.3805,
+      "faltas_sin_justificar": 0.2852
+    },
+    "reporte_clasificacion": {
+      "BAJO": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "soporte": 41
+      },
+      "MEDIO": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "soporte": 40
+      },
+      "ALTO": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "soporte": 119
+      }
+    }
+  },
+  "kmeans": {
+    "modelo": "KMeans",
+    "k_clusters": 3,
+    "silhouette_score": 0.3727,
+    "perfiles": [
+      {
+        "cluster_id": 0,
+        "tipo": "CRITICO",
+        "nombre_perfil": "Riesgo Crítico de Deserción/Reprobación",
+        "conteo_estudiantes": 315,
+        "porcentaje_poblacion": "31.5%",
+        "centroide_promedio_notas": 42.41,
+        "centroide_porcentaje_asistencia": 39.5
+      },
+      {
+        "cluster_id": 1,
+        "tipo": "CRITICO",
+        "nombre_perfil": "Riesgo Crítico de Deserción/Reprobación",
+        "conteo_estudiantes": 257,
+        "porcentaje_poblacion": "25.7%",
+        "centroide_promedio_notas": 38.0,
+        "centroide_porcentaje_asistencia": 76.87
+      },
+      {
+        "cluster_id": 2,
+        "tipo": "MEDIO",
+        "nombre_perfil": "Vulnerabilidad Académica Moderada",
+        "conteo_estudiantes": 428,
+        "porcentaje_poblacion": "42.8%",
+        "centroide_promedio_notas": 79.18,
+        "centroide_porcentaje_asistencia": 79.4
+      }
+    ],
+    "centroides_normalizados": [
+      [
+        -0.5820395546370505,
+        -1.2090317447695451
+      ],
+      [
+        -0.7576175506752891,
+        0.4842772543949311
+      ],
+      [
+        0.8794698197751631,
+        0.598764621159219
+      ]
+    ]
+  },
+  "cnn_deep_learning": {
+    "modelo": "CNN 2D (Keras -> TensorFlow.js)",
+    "accuracy": 1.0,
+    "accuracy_porcentaje": "100.00%",
+    "clases": [
+      "ILEGIBLE",
+      "LEGIBLE"
+    ],
+    "matriz_confusion": [
+      [
+        20,
+        0
+      ],
+      [
+        0,
+        20
+      ]
+    ],
+    "tamano_binario_kb": 1043.13,
+    "reporte_clasificacion": {
+      "ILEGIBLE": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "LEGIBLE": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      }
+    }
+  }
+}

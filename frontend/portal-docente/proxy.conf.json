@@ -4,6 +4,23 @@
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
+  },
+  "/graphql": {
+    "target": "http://127.0.0.1:3000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/mcp": {
+    "target": "http://127.0.0.1:3000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/reports": {
+    "target": "http://127.0.0.1:3000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 }
-

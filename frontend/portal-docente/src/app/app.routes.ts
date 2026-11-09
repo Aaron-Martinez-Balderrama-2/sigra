@@ -14,6 +14,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'calificaciones',
+    loadComponent: () =>
+      import('./features/calificaciones/calificaciones.component').then(
+        (m) => m.CalificacionesComponent
+      ),
+  },
+  {
     path: 'justificativos',
     loadComponent: () =>
       import('./features/justificativos/justificativos.component').then(
@@ -32,4 +39,3 @@ export const routes: Routes = [
     redirectTo: 'asistencia',
   },
 ];
-
