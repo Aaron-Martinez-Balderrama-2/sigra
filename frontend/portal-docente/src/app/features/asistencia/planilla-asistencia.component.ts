@@ -240,7 +240,7 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
       .espacio-asistencia {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: var(--space-md, 1rem);
       }
 
       .encabezado-clase {
@@ -248,41 +248,51 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.75rem;
         background: linear-gradient(135deg, #ffffff 0%, var(--colegio-azul-claro) 100%);
-        border-left: 6px solid var(--colegio-azul-oscuro);
+        border-left: 4px solid var(--colegio-azul-oscuro);
+        padding: clamp(0.75rem, 1vw, 1rem) 1.25rem;
+      }
+
+      .encabezado-clase h2 {
+        font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+        font-weight: 700;
+        color: var(--colegio-azul-oscuro);
+        margin: 0.15rem 0;
       }
 
       .etiqueta-gestion {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 700;
         color: var(--colegio-azul-medio);
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.06em;
       }
 
       .subtexto-docente {
         color: var(--texto-secundario);
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
+        font-size: 0.8rem;
+        margin-top: 0.15rem;
       }
 
       .controles-fecha {
         display: flex;
         align-items: center;
-        gap: 0.65rem;
+        gap: 0.5rem;
         background: #ffffff;
-        padding: 0.5rem 0.85rem;
-        border-radius: var(--radio-md);
+        padding: 0.35rem 0.65rem;
+        border-radius: var(--radius-md, 6px);
         border: 1px solid var(--borde-suave);
+        font-size: 0.8rem;
       }
 
       .input-fecha {
         font-family: inherit;
-        padding: 0.4rem 0.65rem;
+        padding: 0.3rem 0.55rem;
         border: 1px solid var(--borde-suave);
         border-radius: 4px;
         font-weight: 600;
+        font-size: 0.8rem;
       }
 
       .barra-acciones-planilla {
@@ -290,37 +300,46 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.75rem;
       }
 
       .acciones-rapidas {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.45rem;
+      }
+
+      .acciones-rapidas .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.78rem;
       }
 
       .btn-guardar-principal {
-        font-size: 0.95rem;
-        padding: 0.75rem 1.75rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        padding: 0.48rem 1.15rem;
       }
 
       .contenedor-tabla {
         overflow-x: auto;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--sombra-sm);
       }
 
       .numero-orden {
         font-weight: 700;
         color: var(--texto-secundario);
+        font-size: 0.8rem;
       }
 
       .alumno-fila {
         display: flex;
         align-items: center;
-        gap: 0.85rem;
+        gap: 0.65rem;
       }
 
       .alumno-avatar {
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
         background-color: var(--colegio-azul-medio);
         color: #ffffff;
         border-radius: 50%;
@@ -328,37 +347,42 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
         align-items: center;
         justify-content: center;
         font-weight: 700;
+        font-size: 0.78rem;
+        flex-shrink: 0;
       }
 
       .alumno-nombre {
-        font-weight: 700;
+        font-weight: 600;
+        font-size: 0.84rem;
         color: var(--colegio-azul-oscuro);
       }
 
       .alumno-id {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         color: var(--texto-secundario);
       }
 
       .selector-estados {
         display: inline-flex;
         background: #f1f5f9;
-        border-radius: var(--radio-md);
-        padding: 3px;
-        gap: 3px;
+        border-radius: var(--radius-md, 6px);
+        padding: 2px;
+        gap: 2px;
       }
 
       .btn-estado {
-        padding: 0.35rem 0.75rem;
-        font-size: 0.8rem;
+        padding: 0.28rem 0.62rem;
+        font-size: 0.76rem;
         font-weight: 600;
         background: transparent;
         color: var(--texto-secundario);
         border-radius: 4px;
+        transition: all 0.12s ease;
       }
 
       .btn-estado:hover {
         background: #e2e8f0;
+        color: var(--texto-principal);
       }
 
       .activo-presente {
@@ -385,20 +409,20 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.25rem;
+        gap: 0.2rem;
       }
 
       .alerta-inasistencia {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         font-weight: 700;
         color: var(--colegio-rojo-principal);
       }
 
       .alerta {
-        padding: 0.85rem 1.25rem;
-        border-radius: var(--radio-md);
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-md);
         font-weight: 600;
-        font-size: 0.875rem;
+        font-size: 0.82rem;
       }
       .alerta-exito {
         background-color: #dcfce7;
@@ -413,7 +437,7 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
 
       /* Offline */
       .seccion-offline {
-        border-top: 4px solid var(--colegio-dorado-claro);
+        border-top: 3px solid var(--colegio-dorado-claro);
       }
 
       .cabecera-offline, .cabecera-idempotencia {
@@ -421,69 +445,80 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.75rem;
+      }
+
+      .cabecera-offline h3, .cabecera-idempotencia h3 {
+        font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+      }
+
+      .cabecera-offline p, .cabecera-idempotencia p {
+        font-size: 0.78rem;
+        color: var(--texto-secundario);
       }
 
       .cola-vacia {
-        margin-top: 1rem;
-        padding: 0.85rem;
+        margin-top: 0.75rem;
+        padding: 0.65rem 0.85rem;
         background: #f8fafc;
         border: 1px dashed var(--borde-suave);
-        border-radius: var(--radio-md);
+        border-radius: var(--radius-md);
         color: var(--texto-secundario);
-        font-size: 0.875rem;
+        font-size: 0.8rem;
       }
 
       .lista-cola {
-        margin-top: 1rem;
+        margin-top: 0.75rem;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.45rem;
       }
 
       .item-cola {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.75rem 1rem;
+        padding: 0.6rem 0.85rem;
         background: #fffbeb;
         border: 1px solid #fde68a;
-        border-radius: var(--radio-md);
-        font-size: 0.85rem;
+        border-radius: var(--radius-md);
+        font-size: 0.8rem;
       }
 
       /* Idempotencia */
       .seccion-idempotencia {
-        border-top: 4px solid var(--colegio-dorado-principal);
+        border-top: 3px solid var(--colegio-dorado-principal);
       }
 
       .panel-resultados-idempotencia {
-        margin-top: 1.25rem;
+        margin-top: 1rem;
         display: flex;
         flex-direction: column;
-        gap: 0.85rem;
+        gap: 0.75rem;
       }
 
       .uuid-utilizado {
         background: #f1f5f9;
-        padding: 0.5rem 0.85rem;
-        border-radius: var(--radio-md);
-        font-size: 0.85rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: var(--radius-md);
+        font-size: 0.8rem;
       }
 
       .grid-respuestas-idempotencia {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 0.65rem;
       }
 
       .tarjeta-intento {
-        padding: 0.85rem;
-        border-radius: var(--radio-md);
+        padding: 0.7rem;
+        border-radius: var(--radius-md);
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        font-size: 0.8rem;
+        gap: 0.4rem;
+        font-size: 0.76rem;
       }
 
       .intento-primero {
@@ -508,7 +543,7 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
 
       .codigo-http {
         font-weight: 800;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         padding: 2px 6px;
         border-radius: 4px;
         background: #ffffff;
@@ -523,7 +558,7 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
         color: #1e40af;
         font-weight: 700;
       }
-    `,
+    `
   ],
 })
 export class PlanillaAsistenciaComponent implements OnInit {

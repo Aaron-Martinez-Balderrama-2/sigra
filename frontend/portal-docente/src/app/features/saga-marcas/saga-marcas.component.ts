@@ -162,16 +162,22 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
       .espacio-saga {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: var(--space-md, 1rem);
       }
 
       .encabezado-saga {
         background: linear-gradient(135deg, #ffffff 0%, var(--colegio-azul-claro) 100%);
-        border-left: 6px solid var(--colegio-azul-oscuro);
+        border-left: 4px solid var(--colegio-azul-oscuro);
+        padding: clamp(0.75rem, 1vw, 1rem) 1.25rem;
+      }
+
+      .encabezado-saga h2 {
+        font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+        margin: 0.15rem 0;
       }
 
       .subtitulo-saga {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 700;
         color: var(--colegio-azul-medio);
         text-transform: uppercase;
@@ -180,38 +186,43 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
 
       .texto-saga {
         color: var(--texto-secundario);
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
+        font-size: 0.8rem;
+        margin-top: 0.15rem;
       }
 
       .diagrama-saga {
         background: #ffffff;
+        padding: clamp(0.85rem, 1.2vw, 1.25rem);
+      }
+
+      .diagrama-saga h3 {
+        font-size: clamp(0.9rem, 1.1vw, 1.05rem);
       }
 
       .pasos-pipeline {
-        margin-top: 1rem;
+        margin-top: 0.75rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.5rem;
       }
 
       .paso-caja {
         flex: 1;
-        min-width: 220px;
-        padding: 1rem;
-        border-radius: var(--radio-md);
+        min-width: 180px;
+        padding: 0.65rem 0.75rem;
+        border-radius: var(--radius-md);
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.2rem;
         border: 1px solid var(--borde-suave);
       }
 
       .paso-tu-servicio {
         background: #fefce8;
         border: 2px solid var(--colegio-dorado-principal);
-        box-shadow: var(--sombra-md);
+        box-shadow: var(--sombra-sm);
       }
 
       .paso-otro {
@@ -219,72 +230,86 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
       }
 
       .paso-num {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         font-weight: 800;
         color: var(--texto-secundario);
         text-transform: uppercase;
       }
 
       .paso-estado {
-        margin-top: 0.4rem;
-        font-size: 0.7rem;
+        margin-top: 0.25rem;
+        font-size: 0.68rem;
         font-weight: 800;
         color: var(--colegio-azul-medio);
       }
 
       .conector {
-        font-size: 1.5rem;
+        font-size: 1.1rem;
         color: var(--texto-secundario);
       }
 
       .grid-saga {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+
+      .tarjeta {
+        background: var(--bg-tarjeta);
+        border: 1px solid var(--borde-suave);
+        border-radius: var(--radius-lg);
+        padding: clamp(0.85rem, 1.2vw, 1.25rem);
+        box-shadow: var(--sombra-sm);
+      }
+
+      .tarjeta h3 {
+        font-size: clamp(0.9rem, 1.1vw, 1.05rem);
       }
 
       .subtexto {
-        font-size: 0.825rem;
+        font-size: 0.78rem;
         color: var(--texto-secundario);
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
       }
 
       .campo {
-        margin-bottom: 0.85rem;
+        margin-bottom: 0.65rem;
         display: flex;
         flex-direction: column;
-        gap: 0.35rem;
+        gap: 0.25rem;
       }
 
       .flex-input {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.45rem;
       }
 
       .input-form {
         flex: 1;
         font-family: inherit;
-        padding: 0.55rem 0.75rem;
+        padding: 0.42rem 0.65rem;
         border: 1px solid var(--borde-suave);
-        border-radius: var(--radio-md);
-        font-size: 0.85rem;
+        border-radius: var(--radius-md);
+        font-size: 0.82rem;
       }
 
       .btn-bloque {
         width: 100%;
-        margin-top: 0.75rem;
-        padding: 0.7rem;
+        margin-top: 0.65rem;
+        padding: 0.55rem;
+        font-size: 0.82rem;
+        font-weight: 700;
       }
 
       .tarjeta-marca-resultado {
-        margin-top: 1rem;
-        padding: 1rem;
+        margin-top: 0.75rem;
+        padding: 0.75rem;
         background: #f8fafc;
         border: 1px solid var(--borde-suave);
-        border-radius: var(--radio-md);
+        border-radius: var(--radius-md);
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.55rem;
       }
 
       .marca-cabecera {
@@ -294,31 +319,31 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
       }
 
       .marca-detalles {
-        font-size: 0.825rem;
+        font-size: 0.78rem;
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.2rem;
       }
 
       .seccion-accion-compensar {
-        margin-top: 0.5rem;
+        margin-top: 0.45rem;
       }
 
       .aviso-compensado {
-        padding: 0.5rem 0.75rem;
+        padding: 0.45rem 0.65rem;
         background: #fee2e2;
         color: #7f1d1d;
-        border-radius: var(--radio-md);
-        font-size: 0.8rem;
+        border-radius: var(--radius-md);
+        font-size: 0.76rem;
         font-weight: 700;
         text-align: center;
       }
 
       .alerta {
-        padding: 0.85rem 1.25rem;
-        border-radius: var(--radio-md);
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-md);
         font-weight: 600;
-        font-size: 0.875rem;
+        font-size: 0.82rem;
       }
       .alerta-exito {
         background-color: #dcfce7;
@@ -330,7 +355,7 @@ import { AuthSsoService } from '../../core/services/auth-sso.service';
         color: #7f1d1d;
         border: 1px solid #fca5a5;
       }
-    `,
+    `
   ],
 })
 export class SagaMarcasComponent implements OnInit {

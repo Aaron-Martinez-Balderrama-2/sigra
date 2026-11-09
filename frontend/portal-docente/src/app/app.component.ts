@@ -10,10 +10,10 @@ import { NetworkStatusService } from './core/services/network-status.service';
   imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive],
   template: `
     <div class="sigra-shell-layout" [class.modo-embebido]="esEmbebido">
-      <!-- Barra Superior Institucional (1 Sola Fila Unificada y Compacta) -->
+      <!-- Barra Superior Institucional (1 Sola Fila Unificada, Idéntica en Estructura a React) -->
       <header class="header-institucional">
         <div class="contenedor-header-unificado">
-          <!-- 1. Identidad Compacta -->
+          <!-- 1. Identidad Institucional Compacta -->
           <div class="identidad-colegio">
             <img
               src="assets/icono.jpg"
@@ -26,39 +26,39 @@ import { NetworkStatusService } from './core/services/network-status.service';
             </div>
           </div>
 
-          <!-- 2. Pestañas de Navegación en la Misma Fila Central -->
+          <!-- 2. Pestañas de Navegación Compactas y Centradas (Sin Desbordes) -->
           <nav class="nav-pestanas-inline" aria-label="Módulos del Docente">
             <a
               routerLink="/asistencia"
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              📋 Asistencia (CU-01 / CU-02)
+              📋 Asistencia
             </a>
             <a
               routerLink="/calificaciones"
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              📝 Calificaciones y SAGA (GraphQL / NestJS)
+              📝 Calificaciones
             </a>
             <a
               routerLink="/justificativos"
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              📄 Justificativos Escolares y CNN (CU-03)
+              📄 Justificativos
             </a>
             <a
               routerLink="/saga-marcas"
               routerLinkActive="pestana-activa"
               class="pestana"
             >
-              🔄 Monitor Marcas SAGA (CU-04)
+              🔄 Marcas SAGA
             </a>
           </nav>
 
-          <!-- 3. Acciones de Red y Estado -->
+          <!-- 3. Acciones de Red y Estado SSO -->
           <div class="header-acciones">
             <!-- Indicador de Red en Vivo -->
             <div
@@ -96,15 +96,15 @@ import { NetworkStatusService } from './core/services/network-status.service';
         </div>
       </header>
 
-      <!-- Contenedor Principal de la Vista -->
+      <!-- Contenedor Principal de la Vista con Ancho Fluido -->
       <main class="contenido-principal">
         <router-outlet></router-outlet>
       </main>
 
-      <!-- Pie de Página Institucional (oculto dentro del shell) -->
+      <!-- Pie de Página Institucional (solo en modo independiente) -->
       <footer class="footer-institucional" *ngIf="!esEmbebido">
         <p>
-          <strong>Unidad Educativa SIGRA</strong> — Plataforma Distribuida de Gestión Escolar • Módulo de Asistencia Escolar (Java 21 / Spring Boot 3 + PostgreSQL)
+          <strong>Unidad Educativa SIGRA</strong> — Plataforma Distribuida de Gestión Escolar • Módulo del Docente (Java 21 / Spring Boot 3 + PostgreSQL)
         </p>
       </footer>
     </div>
@@ -113,8 +113,12 @@ import { NetworkStatusService } from './core/services/network-status.service';
     `
       .sigra-shell-layout {
         min-height: 100vh;
+        min-height: 100dvh;
         display: flex;
         flex-direction: column;
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: clip;
         background-color: var(--bg-pagina);
       }
 
@@ -126,108 +130,129 @@ import { NetworkStatusService } from './core/services/network-status.service';
         background-color: var(--colegio-azul-oscuro);
         color: #ffffff;
         border-bottom: 2px solid var(--colegio-dorado-principal);
-        box-shadow: var(--sombra-sm);
         position: sticky;
         top: 0;
-        z-index: 100;
+        z-index: 40;
         width: 100%;
       }
 
       .contenedor-header-unificado {
-        max-width: 1400px;
+        max-width: var(--container-max, min(96vw, 120rem));
         margin: 0 auto;
-        padding: 0.45rem 1.25rem;
-        display: flex;
+        padding: 0.55rem var(--space-lg, 1.25rem);
+        display: grid;
+        grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
         align-items: center;
-        justify-content: space-between;
-        gap: 0.85rem;
+        gap: var(--space-md, 0.75rem);
       }
 
       .identidad-colegio {
         display: flex;
         align-items: center;
         gap: 0.65rem;
-        flex-shrink: 0;
+        min-width: 0;
       }
 
       .escudo-institucional {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        border: 1.5px solid var(--colegio-dorado-principal);
+        width: clamp(2rem, 2.4vw, 2.55rem);
+        height: clamp(2rem, 2.4vw, 2.55rem);
+        border-radius: var(--radius-md, 6px);
         object-fit: cover;
+        border: 1.5px solid var(--colegio-dorado-principal);
+        background-color: #ffffff;
+        flex-shrink: 0;
       }
 
       .titulos {
+        min-width: 0;
         display: flex;
         flex-direction: column;
-        line-height: 1.1;
+        justify-content: center;
       }
 
       .subtitulo-institucion {
-        font-size: 0.65rem;
-        color: var(--colegio-dorado-claro);
+        font-size: 0.68rem;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
-        font-weight: 700;
+        letter-spacing: 0.07em;
+        color: var(--colegio-dorado-claro);
+        font-weight: 600;
+        line-height: 1.15;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .titulo-portal {
-        font-size: 0.95rem;
+        font-size: clamp(0.84rem, 0.95vw, 1.02rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
         color: #ffffff;
-        margin: 0;
-        font-weight: 800;
+        line-height: 1.25;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0;
       }
 
-      /* Pestañas inline en la misma fila central */
+      /* Pestañas inline en la misma fila central sin scrollbars */
       .nav-pestanas-inline {
         display: flex;
         align-items: center;
-        gap: 0.25rem;
-        flex: 1;
         justify-content: center;
-        overflow-x: auto;
+        gap: 0.35rem;
+        min-width: 0;
       }
 
       .pestana {
-        padding: 0.42rem 0.85rem;
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: #cbd5e1;
-        border-radius: var(--radio-sm, 6px);
-        text-decoration: none;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: var(--radius-sm, 6px);
+        padding: 0.42rem 0.72rem;
+        font-size: 0.81rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.76);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
         white-space: nowrap;
-        transition: all 0.15s ease;
+        text-decoration: none;
+        min-width: 0;
       }
 
       .pestana:hover {
         color: #ffffff;
-        background: rgba(255, 255, 255, 0.08);
+        background-color: rgba(255, 255, 255, 0.08);
       }
 
       .pestana.pestana-activa {
         color: #ffffff;
-        background: rgba(212, 175, 55, 0.25);
-        border: 1px solid var(--colegio-dorado-principal);
-        box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+        font-weight: 600;
+        background-color: var(--colegio-azul-medio);
+        border: 1px solid rgba(212, 175, 55, 0.45);
+        box-shadow: inset 0 -2px 0 var(--colegio-dorado-principal);
       }
 
       .header-acciones {
         display: flex;
         align-items: center;
-        gap: 0.65rem;
-        flex-shrink: 0;
+        justify-content: flex-end;
+        gap: 0.45rem;
+        min-width: 0;
       }
 
       .badge-red {
-        display: flex;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: var(--radius-sm, 6px);
+        padding: 0.28rem 0.58rem;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.92);
+        display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        padding: 0.25rem 0.6rem;
-        border-radius: 9999px;
         white-space: nowrap;
       }
 
@@ -244,20 +269,20 @@ import { NetworkStatusService } from './core/services/network-status.service';
       }
 
       .btn-toggle-red {
-        background: rgba(255, 255, 255, 0.1);
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: var(--radius-sm, 6px);
         padding: 0.28rem 0.65rem;
-        border-radius: 6px;
         font-size: 0.75rem;
-        font-weight: 600;
+        color: #ffffff;
+        font-weight: 500;
         cursor: pointer;
         white-space: nowrap;
         transition: all 0.15s ease;
       }
 
       .btn-toggle-red:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.18);
       }
 
       .btn-toggle-red.btn-activo {
@@ -271,13 +296,13 @@ import { NetworkStatusService } from './core/services/network-status.service';
         gap: 0.45rem;
         background: rgba(255, 255, 255, 0.08);
         padding: 0.22rem 0.55rem;
-        border-radius: 9999px;
+        border-radius: var(--radius-sm, 6px);
         border: 1px solid rgba(255, 255, 255, 0.15);
       }
 
       .docente-avatar {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
         background: var(--colegio-dorado-principal);
         color: var(--colegio-azul-oscuro);
         border-radius: 50%;
@@ -285,7 +310,7 @@ import { NetworkStatusService } from './core/services/network-status.service';
         align-items: center;
         justify-content: center;
         font-weight: 800;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
       }
 
       .docente-texto {
@@ -307,31 +332,64 @@ import { NetworkStatusService } from './core/services/network-status.service';
 
       .contenido-principal {
         flex: 1;
-        max-width: 1400px;
+        max-width: var(--container-max, min(96vw, 120rem));
         width: 100%;
-        margin: 0.85rem auto;
-        padding: 0 1.25rem;
+        margin: 0.75rem auto 1.5rem;
+        padding: 0 var(--space-lg, 1.25rem);
       }
 
       .footer-institucional {
         background: #0f172a;
         color: #94a3b8;
         text-align: center;
-        padding: 1rem;
+        padding: 0.85rem;
         font-size: 0.75rem;
         border-top: 1px solid var(--borde-suave);
       }
 
-      @media (max-width: 900px) {
+      /* Pantallas medianas / Laptops compactas (<= 1180px) */
+      @media (max-width: 1180px) {
         .contenedor-header-unificado {
+          grid-template-columns: minmax(0, 1fr) auto;
+          row-gap: 0.45rem;
+        }
+
+        .nav-pestanas-inline {
+          grid-column: 1 / -1;
+          justify-content: flex-start;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          padding-top: 0.42rem;
           flex-wrap: wrap;
         }
-        .nav-pestanas-inline {
-          order: 3;
+      }
+
+      /* Móviles y pantallas compactas (<= 640px) */
+      @media (max-width: 640px) {
+        .contenedor-header-unificado {
+          grid-template-columns: minmax(0, 1fr);
+          padding: 0.5rem var(--space-sm, 0.65rem);
+          gap: 0.4rem;
+        }
+
+        .header-acciones {
+          justify-content: space-between;
           width: 100%;
-          justify-content: flex-start;
-          padding-top: 0.35rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-pestanas-inline {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0.28rem;
+        }
+
+        .pestana {
+          padding: 0.4rem 0.45rem;
+          font-size: 0.76rem;
+          width: 100%;
+        }
+
+        .contenido-principal {
+          padding: 0 var(--space-sm, 0.65rem);
         }
       }
     `,

@@ -238,16 +238,22 @@ interface AnalisisImagenResultado {
       .espacio-justificativos {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: var(--space-md, 1rem);
       }
 
       .encabezado-seccion {
         background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
-        border-left: 6px solid var(--colegio-azul-oscuro);
+        border-left: 4px solid var(--colegio-azul-oscuro);
+        padding: clamp(0.75rem, 1vw, 1rem) 1.25rem;
+      }
+
+      .encabezado-seccion h2 {
+        font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+        margin: 0.15rem 0;
       }
 
       .subtitulo-seccion {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 700;
         color: var(--colegio-azul-medio);
         text-transform: uppercase;
@@ -256,59 +262,59 @@ interface AnalisisImagenResultado {
 
       .texto-ayuda {
         color: var(--texto-secundario);
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
+        font-size: 0.8rem;
+        margin-top: 0.15rem;
       }
 
       .tarjeta {
         background: var(--bg-tarjeta);
         border: 1px solid var(--borde-suave);
-        border-radius: var(--radio-lg);
-        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        padding: clamp(0.85rem, 1.2vw, 1.25rem);
         box-shadow: var(--sombra-sm);
       }
 
       .grid-justificativos {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        gap: 1rem;
       }
 
       @media (max-width: 900px) {
         .grid-justificativos {
-          grid-template-columns: 1fr;
+          grid-template-columns: minmax(0, 1fr);
         }
       }
 
       .campo-form {
         display: flex;
         flex-direction: column;
-        gap: 0.35rem;
-        margin-bottom: 0.85rem;
+        gap: 0.3rem;
+        margin-bottom: 0.65rem;
       }
 
       .input-form {
-        padding: 0.5rem 0.75rem;
+        padding: 0.42rem 0.65rem;
         border: 1px solid var(--borde-suave);
-        border-radius: var(--radio-md);
+        border-radius: var(--radius-md);
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.82rem;
       }
 
       /* Análisis de Documento */
       .seccion-analisis-documento {
-        margin: 1rem 0;
-        padding: 1rem;
+        margin: 0.75rem 0;
+        padding: 0.75rem;
         background: #f8fafc;
         border: 1px solid var(--borde-suave);
-        border-radius: var(--radio-md);
+        border-radius: var(--radius-md);
       }
 
       .selector-muestras {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.45rem;
         flex-wrap: wrap;
-        margin: 0.65rem 0;
+        margin: 0.45rem 0;
       }
 
       .btn-seleccionado {
@@ -323,17 +329,18 @@ interface AnalisisImagenResultado {
 
       .panel-preview-vision {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
         align-items: center;
         background: #ffffff;
-        padding: 0.85rem;
-        border-radius: var(--radio-md);
+        padding: 0.65rem;
+        border-radius: var(--radius-md);
         border: 1px solid var(--borde-suave);
+        flex-wrap: wrap;
       }
 
       .canvas-doc {
-        width: 120px;
-        height: 90px;
+        width: 110px;
+        height: 82px;
         background: #0f172a;
         border-radius: 4px;
         border: 1px solid var(--borde-suave);
@@ -343,29 +350,29 @@ interface AnalisisImagenResultado {
       .diagnostico-vision {
         display: flex;
         flex-direction: column;
-        gap: 0.35rem;
+        gap: 0.25rem;
       }
 
       .badge-clasificacion-box {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
       }
 
       .confianza-texto {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: #334155;
       }
 
       .metricas-imagen {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         color: #64748b;
-        line-height: 1.4;
+        line-height: 1.35;
       }
 
       .btn-bloque {
         width: 100%;
-        margin-top: 1rem;
+        margin-top: 0.75rem;
       }
 
       .flex-entre {
@@ -377,26 +384,26 @@ interface AnalisisImagenResultado {
       .cargando-texto,
       .sin-pendientes {
         text-align: center;
-        padding: 2rem;
+        padding: 1.5rem;
         color: var(--texto-secundario);
-        font-size: 0.9rem;
+        font-size: 0.85rem;
       }
 
       .lista-pendientes {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        margin-top: 1rem;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
       }
 
       .tarjeta-pendiente {
         border: 1px solid var(--borde-suave);
-        padding: 1rem;
-        border-radius: var(--radio-md);
+        padding: 0.75rem;
+        border-radius: var(--radius-md);
         background: #ffffff;
         display: flex;
         flex-direction: column;
-        gap: 0.65rem;
+        gap: 0.45rem;
       }
 
       .cabecera-item-pendiente {
@@ -407,45 +414,45 @@ interface AnalisisImagenResultado {
 
       .estudiante-nombre {
         font-weight: 700;
-        font-size: 0.95rem;
+        font-size: 0.88rem;
         display: block;
       }
 
       .fecha-falta-badge {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         color: var(--texto-secundario);
       }
 
       .motivo-texto {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: var(--texto-principal);
         background: #f8fafc;
-        padding: 0.5rem 0.75rem;
+        padding: 0.45rem 0.65rem;
         border-radius: 4px;
       }
 
       .formulario-revision {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.45rem;
       }
 
       .input-obs {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.65rem;
+        font-size: 0.78rem;
+        padding: 0.35rem 0.55rem;
       }
 
       .botones-resolucion {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.45rem;
       }
 
       .btn-resolucion {
         flex: 1;
-        padding: 0.5rem;
-        font-size: 0.8rem;
+        padding: 0.42rem;
+        font-size: 0.78rem;
         font-weight: 700;
-        border-radius: var(--radio-md);
+        border-radius: var(--radius-md);
       }
 
       .btn-aprobar {
@@ -465,10 +472,10 @@ interface AnalisisImagenResultado {
       }
 
       .alerta {
-        padding: 0.85rem 1.25rem;
-        border-radius: var(--radio-md);
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-md);
         font-weight: 600;
-        font-size: 0.875rem;
+        font-size: 0.82rem;
       }
       .alerta-exito {
         background-color: #dcfce7;
@@ -480,7 +487,7 @@ interface AnalisisImagenResultado {
         color: #7f1d1d;
         border: 1px solid #fca5a5;
       }
-    `,
+    `
   ],
 })
 export class JustificativosComponent implements OnInit {

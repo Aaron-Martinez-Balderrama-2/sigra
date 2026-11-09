@@ -316,7 +316,7 @@ import { NetworkStatusService } from '../../core/services/network-status.service
       .espacio-calificaciones {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: var(--space-md, 1rem);
       }
 
       .encabezado-calificaciones {
@@ -324,13 +324,21 @@ import { NetworkStatusService } from '../../core/services/network-status.service
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.75rem;
         background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
-        border-left: 6px solid var(--colegio-azul-oscuro);
+        border-left: 4px solid var(--colegio-azul-oscuro);
+        padding: clamp(0.75rem, 1vw, 1rem) 1.25rem;
+      }
+
+      .encabezado-calificaciones h2 {
+        font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+        font-weight: 700;
+        color: var(--colegio-azul-oscuro);
+        margin: 0.15rem 0;
       }
 
       .etiqueta-gestion {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 700;
         color: var(--colegio-azul-medio);
         text-transform: uppercase;
@@ -339,40 +347,40 @@ import { NetworkStatusService } from '../../core/services/network-status.service
 
       .subtexto-docente {
         color: var(--texto-secundario);
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
+        font-size: 0.8rem;
+        margin-top: 0.15rem;
       }
 
       .tarjeta {
         background: var(--bg-tarjeta);
         border: 1px solid var(--borde-suave);
-        border-radius: var(--radio-lg);
-        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        padding: clamp(0.85rem, 1.2vw, 1.25rem);
         box-shadow: var(--sombra-sm);
       }
 
       .grid-form-eval {
         display: grid;
         grid-template-columns: 2fr 1fr;
-        gap: 1rem;
+        gap: 0.75rem;
       }
 
       .campo {
         display: flex;
         flex-direction: column;
-        gap: 0.35rem;
+        gap: 0.3rem;
       }
 
       .input-form {
-        padding: 0.5rem 0.75rem;
+        padding: 0.42rem 0.65rem;
         border: 1px solid var(--borde-suave);
-        border-radius: var(--radio-md);
+        border-radius: var(--radius-md);
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.82rem;
       }
 
       .botones-form {
-        margin-top: 1rem;
+        margin-top: 0.75rem;
         display: flex;
         justify-content: flex-end;
       }
@@ -381,22 +389,26 @@ import { NetworkStatusService } from '../../core/services/network-status.service
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .cabecera-selector h3 {
+        font-size: clamp(0.9rem, 1.1vw, 1.05rem);
       }
 
       .lista-evaluaciones-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 0.85rem;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 0.65rem;
       }
 
       .tarjeta-eval-item {
-        padding: 1rem;
+        padding: 0.75rem;
         border: 1px solid var(--borde-suave);
-        border-radius: var(--radio-md);
+        border-radius: var(--radius-md);
         cursor: pointer;
         background: #f8fafc;
-        transition: all 0.2s;
+        transition: all 0.15s ease;
       }
 
       .tarjeta-eval-item:hover {
@@ -414,11 +426,13 @@ import { NetworkStatusService } from '../../core/services/network-status.service
         display: flex;
         justify-content: space-between;
         align-items: center;
+        font-size: 0.84rem;
       }
 
       .eval-meta {
-        margin-top: 0.5rem;
+        margin-top: 0.35rem;
         color: var(--texto-secundario);
+        font-size: 0.74rem;
       }
 
       .badge-borrador {
@@ -439,26 +453,30 @@ import { NetworkStatusService } from '../../core/services/network-status.service
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1.25rem;
+        gap: 0.75rem;
+        margin-bottom: 0.85rem;
+      }
+
+      .cabecera-planilla-notas h3 {
+        font-size: clamp(0.9rem, 1.1vw, 1.05rem);
       }
 
       .promedio-box {
         background: #0f172a;
         color: #ffffff;
-        padding: 0.65rem 1.25rem;
-        border-radius: var(--radio-md);
+        padding: 0.45rem 0.95rem;
+        border-radius: var(--radius-md);
         text-align: right;
       }
 
       .promedio-label {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: #94a3b8;
         display: block;
       }
 
       .promedio-valor {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 800;
         color: #f87171;
       }
@@ -467,14 +485,45 @@ import { NetworkStatusService } from '../../core/services/network-status.service
         color: #4ade80;
       }
 
+      .alumno-fila {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+      }
+
+      .alumno-avatar {
+        width: 30px;
+        height: 30px;
+        background-color: var(--colegio-azul-medio);
+        color: #ffffff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+      }
+
+      .alumno-nombre {
+        font-weight: 600;
+        font-size: 0.84rem;
+        color: var(--colegio-azul-oscuro);
+      }
+
+      .alumno-id {
+        font-size: 0.72rem;
+        color: var(--texto-secundario);
+      }
+
       .input-nota {
-        width: 80px;
-        padding: 0.4rem;
+        width: 70px;
+        padding: 0.32rem;
         text-align: center;
         font-weight: 700;
-        font-size: 1rem;
-        border: 2px solid var(--borde-suave);
-        border-radius: var(--radio-md);
+        font-size: 0.9rem;
+        border: 1.5px solid var(--borde-suave);
+        border-radius: var(--radius-md);
       }
 
       .input-nota:focus {
@@ -492,14 +541,14 @@ import { NetworkStatusService } from '../../core/services/network-status.service
       }
 
       .barra-acciones-notas {
-        margin-top: 1.25rem;
+        margin-top: 0.85rem;
         display: flex;
         justify-content: flex-end;
       }
 
       /* SAGA Transversal */
       .seccion-saga-transversal {
-        border-top: 4px solid var(--colegio-dorado-principal);
+        border-top: 3px solid var(--colegio-dorado-principal);
       }
 
       .cabecera-saga-transversal {
@@ -507,11 +556,15 @@ import { NetworkStatusService } from '../../core/services/network-status.service
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.75rem;
+      }
+
+      .cabecera-saga-transversal h3 {
+        font-size: clamp(0.9rem, 1.1vw, 1.05rem);
       }
 
       .subtitulo-saga {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 800;
         text-transform: uppercase;
         color: var(--colegio-dorado-principal);
@@ -519,17 +572,17 @@ import { NetworkStatusService } from '../../core/services/network-status.service
 
       .switch-fallo-box {
         background: #fff1f2;
-        padding: 0.65rem 1rem;
-        border-radius: var(--radio-md);
+        padding: 0.45rem 0.75rem;
+        border-radius: var(--radius-md);
         border: 1px solid #fecdd3;
       }
 
       .switch-label {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
         cursor: pointer;
-        font-size: 0.85rem;
+        font-size: 0.78rem;
         color: #9f1239;
       }
 
@@ -537,19 +590,20 @@ import { NetworkStatusService } from '../../core/services/network-status.service
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.75rem;
-        margin: 1.5rem 0;
+        gap: 0.5rem;
+        margin: 1rem 0;
         flex-wrap: wrap;
       }
 
       .caja-microservicio {
         flex: 1;
-        min-width: 180px;
+        min-width: 150px;
         background: #f8fafc;
-        border: 2px solid var(--borde-suave);
-        border-radius: var(--radio-md);
-        padding: 0.85rem;
+        border: 1.5px solid var(--borde-suave);
+        border-radius: var(--radius-md);
+        padding: 0.65rem 0.75rem;
         text-align: center;
+        font-size: 0.78rem;
       }
 
       .caja-microservicio.ms-activo {
@@ -558,26 +612,26 @@ import { NetworkStatusService } from '../../core/services/network-status.service
       }
 
       .ms-num {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         font-weight: 700;
         color: #64748b;
         text-transform: uppercase;
       }
 
       .ms-nombre {
-        font-size: 0.95rem;
+        font-size: 0.88rem;
         font-weight: 800;
         color: #0f172a;
       }
 
       .ms-tech {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         color: #475569;
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.25rem;
       }
 
       .ms-status {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         color: #059669;
       }
@@ -587,7 +641,7 @@ import { NetworkStatusService } from '../../core/services/network-status.service
       }
 
       .flecha-pipeline {
-        font-size: 1.25rem;
+        font-size: 1rem;
         font-weight: 800;
         color: #94a3b8;
       }
@@ -598,12 +652,12 @@ import { NetworkStatusService } from '../../core/services/network-status.service
       }
 
       .panel-resultado-saga {
-        margin-top: 1.25rem;
+        margin-top: 0.85rem;
       }
 
       .caja-resultado-final {
-        padding: 1rem 1.25rem;
-        border-radius: var(--radio-md);
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-md);
       }
 
       .resultado-exito {
@@ -619,23 +673,23 @@ import { NetworkStatusService } from '../../core/services/network-status.service
       }
 
       .resultado-titulo {
-        font-size: 1rem;
+        font-size: 0.88rem;
         font-weight: 800;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.35rem;
       }
 
       .resultado-detalles {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.2rem;
       }
 
       .alerta {
-        padding: 0.85rem 1.25rem;
-        border-radius: var(--radio-md);
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-md);
         font-weight: 600;
-        font-size: 0.875rem;
+        font-size: 0.82rem;
       }
       .alerta-exito {
         background: #dcfce7;
@@ -647,7 +701,7 @@ import { NetworkStatusService } from '../../core/services/network-status.service
         color: #7f1d1d;
         border: 1px solid #fca5a5;
       }
-    `,
+    `
   ],
 })
 export class CalificacionesComponent implements OnInit {
