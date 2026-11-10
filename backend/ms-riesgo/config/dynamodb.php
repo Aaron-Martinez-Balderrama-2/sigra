@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'endpoint' => env('DYNAMODB_ENDPOINT', 'http://localhost:8000'),
+    'endpoint' => env('DYNAMODB_ENDPOINT', 'http://127.0.0.1:8000'),
     'region' => env('DYNAMODB_REGION', 'us-east-1'),
     'version' => 'latest',
 

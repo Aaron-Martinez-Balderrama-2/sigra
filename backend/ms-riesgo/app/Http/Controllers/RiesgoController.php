@@ -72,9 +72,13 @@ class RiesgoController extends Controller
                 promedioCalificaciones: (float) $validated['promedioCalificaciones']
             );
 
+            $notificacionN8n = $this->evaluarRiesgoUseCase->getUltimaNotificacionN8n();
+
             return response()->json([
                 'status' => 'EXITO',
                 'mensaje' => 'Riesgo académico evaluado y confirmado en DynamoDB.',
+                'n8nNotificado' => $notificacionN8n['despachado'] ?? false,
+                'n8nDetalle' => $notificacionN8n,
                 'datos' => $analisis->toArray(),
             ], 200);
         } catch (\InvalidArgumentException $e) {

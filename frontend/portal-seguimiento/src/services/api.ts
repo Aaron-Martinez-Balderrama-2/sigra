@@ -222,6 +222,8 @@ export async function evaluarRiesgoEstudiante(params: {
 }): Promise<{
   mensaje: string;
   analisis: AnalisisRiesgo;
+  n8nNotificado?: boolean;
+  n8nDetalle?: any;
 }> {
   const { riesgo } = getBaseUrls();
   const headers: Record<string, string> = {
@@ -251,6 +253,8 @@ export async function evaluarRiesgoEstudiante(params: {
   return {
     mensaje: body.mensaje,
     analisis: body.datos as AnalisisRiesgo,
+    n8nNotificado: body.n8nNotificado ?? false,
+    n8nDetalle: body.n8nDetalle ?? null,
   };
 }
 

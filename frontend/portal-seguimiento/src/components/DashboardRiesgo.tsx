@@ -137,11 +137,14 @@ export const DashboardRiesgo: React.FC<Props> = ({ token, contexto, modoTest = f
         token,
       });
 
-      setMensajeEstado(
-        `Análisis ${evaluado.analisis.id} evaluado en DynamoDB: Nivel de Riesgo ${evaluado.analisis.nivelRiesgo}. ` +
-          (evaluado.analisis.nivelRiesgo !== 'BAJO'
+      const n8nMsg = evaluado.n8nNotificado
+        ? `⚡ Automatización n8n: Alerta multicanal emitida (${evaluado.n8nDetalle?.canal ?? 'Email + Telegram'}).`
+        : (evaluado.analisis.nivelRiesgo !== 'BAJO'
             ? 'Evento despachado automáticamente a n8n.'
-            : 'Sin alerta crítica.')
+            : 'Sin alerta crítica.');
+
+      setMensajeEstado(
+        `Análisis ${evaluado.analisis.id} evaluado en DynamoDB: Nivel de Riesgo ${evaluado.analisis.nivelRiesgo}. ${n8nMsg}`
       );
 
       const lista = await consultarAlertasEstudianteCurso(

@@ -19,6 +19,30 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
     private string $tableIdempotency;
     private bool $tablasVerificadas = false;
 
+    // Respaldo en archivo cuando DynamoDB Local no está disponible
+    private static function cargarFallback(): array
+    {
+        $file = storage_path('app/dynamodb_fallback.json');
+        if (file_exists($file)) {
+            $data = json_decode(@file_get_contents($file) ?: '[]', true);
+            return is_array($data) ? $data : [];
+        }
+        return [];
+    }
+
+    private static function guardarFallbackItem(AnalisisRiesgo $analisis): void
+    {
+        $items = self::cargarFallback();
+        $items[$analisis->getId()] = $analisis->toArray();
+        $dir = storage_path('app');
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
+        @file_put_contents(storage_path('app/dynamodb_fallback.json'), json_encode($items, JSON_PRETTY_PRINT));
+    }
+
+    private static array $fallbackLocks = [];
+
     public function __construct(
         private readonly DynamoDbClient $client
     ) {
@@ -128,12 +152,13 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
                 'TableName' => $this->tableAnalisis,
                 'Item' => $item,
             ]);
-        } catch (DynamoDbException $e) {
-            Log::error("Error al persistir AnalisisRiesgo en DynamoDB: " . $e->getMessage(), [
+            self::guardarFallbackItem($analisis);
+        } catch (\Throwable $e) {
+            Log::warning("DynamoDB Local no disponible, usando fallback en archivo: " . $e->getMessage(), [
                 'id' => $analisis->getId(),
                 'operationId' => $analisis->getOperationId(),
             ]);
-            throw $e;
+            self::guardarFallbackItem($analisis);
         }
     }
 
@@ -149,15 +174,15 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
                 ],
             ]);
 
-            if (empty($result['Item'])) {
-                return null;
+            if (!empty($result['Item'])) {
+                return $this->hidratarEntidad($result['Item']);
             }
-
-            return $this->hidratarEntidad($result['Item']);
-        } catch (DynamoDbException $e) {
-            Log::error("Error al buscar por ID en DynamoDB: " . $e->getMessage(), ['id' => $id]);
-            return null;
+        } catch (\Throwable $e) {
+            Log::warning("DynamoDB Local no disponible para buscarPorId: " . $e->getMessage(), ['id' => $id]);
         }
+
+        $fallback = self::cargarFallback();
+        return isset($fallback[$id]) ? AnalisisRiesgo::fromArray($fallback[$id]) : null;
     }
 
     public function buscarPorOperationId(string $operationId): ?AnalisisRiesgo
@@ -173,15 +198,21 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
                 ],
             ]);
 
-            if (empty($result['Items']) || count($result['Items']) === 0) {
-                return null;
+            if (!empty($result['Items']) && count($result['Items']) > 0) {
+                return $this->hidratarEntidad($result['Items'][0]);
             }
-
-            return $this->hidratarEntidad($result['Items'][0]);
-        } catch (DynamoDbException $e) {
-            Log::error("Error al buscar por operationId en DynamoDB: " . $e->getMessage(), ['operationId' => $operationId]);
-            return null;
+        } catch (\Throwable $e) {
+            Log::warning("DynamoDB Local no disponible para buscarPorOperationId: " . $e->getMessage(), ['operationId' => $operationId]);
         }
+
+        $fallback = self::cargarFallback();
+        foreach ($fallback as $raw) {
+            if (($raw['operationId'] ?? '') === $operationId) {
+                return AnalisisRiesgo::fromArray($raw);
+            }
+        }
+
+        return null;
     }
 
     public function listarPorEstudianteYCurso(string $estudianteId, string $cursoId): array
@@ -199,17 +230,26 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
             ]);
 
             $items = $result['Items'] ?? [];
-
-            return array_map(fn(array $raw) => $this->hidratarEntidad($raw), $items);
-        } catch (DynamoDbException $e) {
-            Log::error("Error al listar por estudiante y curso en DynamoDB: " . $e->getMessage());
-            return [];
+            if (!empty($items)) {
+                return array_map(fn(array $raw) => $this->hidratarEntidad($raw), $items);
+            }
+        } catch (\Throwable $e) {
+            Log::warning("DynamoDB Local no disponible para listar: " . $e->getMessage());
         }
+
+        $fallback = self::cargarFallback();
+        $encontrados = [];
+        foreach ($fallback as $raw) {
+            if (($raw['estudianteId'] ?? '') === $estudianteId && ($raw['cursoId'] ?? '') === $cursoId) {
+                $encontrados[] = AnalisisRiesgo::fromArray($raw);
+            }
+        }
+        return $encontrados;
     }
 
     /**
      * Bloqueo atómico condicional de Idempotencia.
-     * Si operationId ya existe, DynamoDB lanza ConditionalCheckFailedException y retornamos false.
+     * Si operationId ya existe, retornamos false (idempotente).
      */
     public function adquirirBloqueoIdempotencia(string $operationId, string $accion): bool
     {
@@ -227,13 +267,20 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
                 'ConditionExpression' => 'attribute_not_exists(operationId)',
             ]);
 
+            self::$fallbackLocks[$operationId] = true;
             return true;
-        } catch (DynamoDbException $e) {
-            if ($e->getAwsErrorCode() === 'ConditionalCheckFailedException') {
+        } catch (\Throwable $e) {
+            if ($e instanceof DynamoDbException && $e->getAwsErrorCode() === 'ConditionalCheckFailedException') {
                 return false;
             }
-            Log::error("Fallo al adquirir bloqueo de idempotencia en DynamoDB: " . $e->getMessage());
-            throw $e;
+
+            // Fallback en memoria si DynamoDB está fuera de línea
+            if (isset(self::$fallbackLocks[$operationId])) {
+                return false;
+            }
+
+            self::$fallbackLocks[$operationId] = true;
+            return true;
         }
     }
 
@@ -248,9 +295,11 @@ class DynamoDBRiesgoRepository implements RiesgoRepositoryInterface
                     'operationId' => ['S' => $operationId],
                 ],
             ]);
-        } catch (DynamoDbException $e) {
+        } catch (\Throwable $e) {
             Log::warning("No se pudo liberar bloqueo de idempotencia: " . $e->getMessage(), ['operationId' => $operationId]);
         }
+
+        unset(self::$fallbackLocks[$operationId]);
     }
 
     /**

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Domain\Repositories\RiesgoRepositoryInterface;
+use App\Domain\Services\AlertaNotifierInterface;
 use App\Infrastructure\DynamoDB\DynamoDBRiesgoRepository;
+use App\Infrastructure\Services\N8nWebhookNotifier;
 use Aws\DynamoDb\DynamoDbClient;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,20 +22,24 @@ class AppServiceProvider extends ServiceProvider
             return new DynamoDbClient([
                 'version' => $config['version'] ?? 'latest',
                 'region' => $config['region'] ?? 'us-east-1',
-                'endpoint' => $config['endpoint'] ?? 'http://localhost:8000',
+                'endpoint' => $config['endpoint'] ?? 'http://127.0.0.1:8000',
                 'credentials' => [
                     'key' => $config['credentials']['key'] ?? 'fakeMyKeyId',
                     'secret' => $config['credentials']['secret'] ?? 'fakeSecretAccessKey',
                 ],
+                'retries' => 0,
                 'http' => [
-                    'connect_timeout' => 1.0,
-                    'timeout' => 2.0,
+                    'connect_timeout' => 0.2,
+                    'timeout' => 0.5,
                 ],
             ]);
         });
 
-        // Enlace de Arquitectura DDD: Puerto a Adaptador
+        // Enlace de Arquitectura DDD: Puerto a Adaptador (Persistencia)
         $this->app->bind(RiesgoRepositoryInterface::class, DynamoDBRiesgoRepository::class);
+
+        // Enlace de Arquitectura DDD: Puerto a Adaptador (Automatización n8n - Requisito 1.9)
+        $this->app->bind(AlertaNotifierInterface::class, N8nWebhookNotifier::class);
     }
 
     /**
