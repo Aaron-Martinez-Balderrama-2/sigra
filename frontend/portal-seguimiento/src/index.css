@@ -1219,3 +1219,354 @@ pre {
     --container-max: min(95vw, 136rem);
   }
 }
+
+/* ==========================================================================
+   MÓDULO DE REPORTES Y ANALÍTICA AVANZADA (GRÁFICOS, RIESGO Y APROBADOS)
+   ========================================================================== */
+.analytics-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.chart-card {
+  background: var(--bg-tarjeta);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.chart-title-group h3 {
+  font-size: 0.95rem;
+  color: var(--colegio-azul-oscuro);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+.chart-title-group p {
+  font-size: 0.76rem;
+  color: var(--texto-secundario);
+  margin-top: 0.15rem;
+}
+
+.chart-svg-wrap {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0.25rem 0;
+}
+
+.chart-meta-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 0.5rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--borde-suave);
+}
+
+.chart-meta-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.chart-meta-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: var(--texto-secundario);
+  font-weight: 600;
+}
+
+.chart-meta-val {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--colegio-azul-oscuro);
+}
+
+/* Proporción Segmentada Aprobados / Aplazados */
+.pass-fail-bar {
+  display: flex;
+  height: 1.5rem;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.pass-segment {
+  background: #15803D;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: width 0.3s ease;
+}
+
+.fail-segment {
+  background: #C81D25;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: width 0.3s ease;
+}
+
+/* Paneles de Clasificación de Riesgo Escolar */
+.risk-classification-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.risk-col-panel {
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.risk-col-panel.danger-zone {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+}
+
+.risk-col-panel.safe-zone {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+}
+
+.risk-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.risk-col-header h3 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.danger-zone .risk-col-header h3 {
+  color: #991B1B;
+}
+
+.safe-zone .risk-col-header h3 {
+  color: #166534;
+}
+
+.risk-student-card {
+  background: #FFFFFF;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--borde-suave);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.risk-student-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.student-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.student-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.student-avatar.avatar-red {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+.student-avatar.avatar-amber {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.student-avatar.avatar-green {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.student-name-sub {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.student-name-sub strong {
+  font-size: 0.84rem;
+  color: var(--colegio-azul-oscuro);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-name-sub span {
+  font-size: 0.7rem;
+  color: var(--texto-secundario);
+}
+
+.risk-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.risk-tag {
+  font-size: 0.68rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.risk-tag.tag-danger {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.risk-tag.tag-warning {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.risk-tag.tag-success {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.risk-action-note {
+  font-size: 0.74rem;
+  color: var(--texto-cuerpo);
+  background: var(--bg-superficie);
+  padding: 0.4rem 0.55rem;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--colegio-azul-medio);
+}
+
+/* Pestañas de Filtrado de la Nómina */
+.filter-tabs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.filter-tab-pill {
+  border: 1px solid var(--borde-suave);
+  background: var(--bg-superficie);
+  color: var(--texto-secundario);
+  font-size: 0.76rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.filter-tab-pill:hover {
+  background: #E2E8F0;
+  color: var(--texto-cuerpo);
+}
+
+.filter-tab-pill.active {
+  background: var(--colegio-azul-oscuro);
+  color: #FFFFFF;
+  border-color: var(--colegio-azul-oscuro);
+}
+
+.tab-badge {
+  font-size: 0.65rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.filter-tab-pill.active .tab-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+}
+
+.grade-val-pill {
+  font-size: 0.95rem;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
+.grade-val-pill.pass {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.grade-val-pill.fail {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+.asist-micro-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 100%;
+  max-width: 7.5rem;
+}
+
+.asist-bar-track {
+  width: 100%;
+  height: 0.4rem;
+  background: #E2E8F0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.asist-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+

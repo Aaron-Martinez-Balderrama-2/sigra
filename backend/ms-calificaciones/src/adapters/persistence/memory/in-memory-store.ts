@@ -147,7 +147,7 @@ export class InMemoryStore extends MemoryData implements Store {
       grado: 3,
       paralelo: 'B',
       gestion: 2026,
-      estudiantes: ['est-001', 'est-002', 'est-003'],
+      estudiantes: ['est-001', 'est-002', 'est-003', 'est-004', 'est-005'],
     });
     initial.cursos.set('pri-2a', {
       id: 'pri-2a',
@@ -209,6 +209,10 @@ export class InMemoryStore extends MemoryData implements Store {
       'est-001': [45, 50, 58, 52],
       // Santiago Flores (estudiante regular con justificativos y atrasos, promedio 64.5)
       'est-003': [65, 60, 70, 63],
+      // Camila Gutiérrez Paz (alumna regular, promedio 72.75)
+      'est-004': [72, 75, 70, 74],
+      // Diego Morales Arteaga (alumno regular, promedio 68.25)
+      'est-005': [68, 65, 70, 67],
     };
 
     for (const m of materias) {
@@ -265,14 +269,14 @@ export class InMemoryStore extends MemoryData implements Store {
     initial.accesos.set('33333333-3333-4333-8333-333333333333', {
       id: '33333333-3333-4333-8333-333333333333',
       asignaciones: asignacionesCompletas,
-      estudiantes: ['est-001', 'est-002', 'est-003'],
+      estudiantes: ['est-001', 'est-002', 'est-003', 'est-004', 'est-005'],
     });
 
     // Padre Roberto Flores
     initial.accesos.set('22222222-2222-4222-8222-222222222222', {
       id: '22222222-2222-4222-8222-222222222222',
       asignaciones: [],
-      estudiantes: ['est-001', 'est-002', 'est-003'],
+      estudiantes: ['est-001', 'est-002', 'est-003', 'est-004', 'est-005'],
     });
 
     super(initial);

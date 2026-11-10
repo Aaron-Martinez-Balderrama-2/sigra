@@ -206,7 +206,7 @@ describe('Casos de Uso de Dominio y Orquestador SAGA en Práctica Real (Clean Ar
     consultar = new ConsultarResultados(store, services);
     publicar = new PublicarEvaluacion(store, services);
 
-    await store.insert('cursos', {
+    await store.put('cursos', {
       id: 'CURSO-1A',
       nivel: 'SECUNDARIA',
       grado: 1,
@@ -214,14 +214,14 @@ describe('Casos de Uso de Dominio y Orquestador SAGA en Práctica Real (Clean Ar
       gestion: 2026,
       estudiantes: ['EST-001', 'EST-002', 'EST-003'],
     });
-    await store.insert('accesos', {
+    await store.put('accesos', {
       id: DOCENTE.sub,
       asignaciones: [
         { cursoId: 'CURSO-1A', materiaId: 'MAT-101', gestion: 2026 },
       ],
       estudiantes: [],
     });
-    await store.insert('accesos', {
+    await store.put('accesos', {
       id: PADRE.sub,
       asignaciones: [],
       estudiantes: ['EST-001'],

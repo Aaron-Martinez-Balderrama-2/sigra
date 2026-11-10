@@ -19,7 +19,7 @@ async function main() {
         grado: 3,
         paralelo: 'B',
         gestion: 2026,
-        estudiantes: ['est-001', 'est-002'],
+        estudiantes: ['est-001', 'est-002', 'est-003', 'est-004', 'est-005'],
       },
       {
         id: 'pri-2a',

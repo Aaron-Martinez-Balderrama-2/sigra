@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sigra-docente-v1';
+const CACHE_NAME = 'sigra-docente-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -47,13 +47,14 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
 
-      return fetch(event.request).catch(() => {
+      return fetch(event.request).catch(async () => {
         // Si no hay red y es navegación HTML, retornar index.html
         if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+          const fallback = await caches.match('/index.html');
+          if (fallback) return fallback;
         }
+        return new Response('Network offline', { status: 503, statusText: 'Offline' });
       });
     })
   );
 });
-
