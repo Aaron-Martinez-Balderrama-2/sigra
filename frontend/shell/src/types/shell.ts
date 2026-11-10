@@ -79,7 +79,7 @@ export const PERFILES_DEMO: Record<RolUsuario, SesionSso> = {
       nombre: 'Sr. Roberto Flores',
       roles: ['PADRE'],
       cargo: 'Tutor / Padre de Familia',
-      email: 'roberto.flores@familia.bo',
+      email: 'roberto.flores@sigra.edu.bo',
     },
     contextoEscolar: {
       cursoId: 'sec-3b',

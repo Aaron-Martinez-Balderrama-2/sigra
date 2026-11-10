@@ -1,41 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  ShieldCheck,
-  UserCheck,
+  Mail,
   KeyRound,
-  CheckCircle2,
   AlertCircle,
-  Shield,
-  BookOpen,
-  Users,
-  Sparkles,
+  LogIn,
 } from 'lucide-react';
 import { RolUsuario, SesionSso } from '../types/shell';
-import { autenticarRapido, verificarEstadoKeycloak } from '../services/ssoAuth';
+import { autenticarRapido } from '../services/ssoAuth';
 
 interface Props {
   onLoginExitoso: (sesion: SesionSso) => void;
 }
 
+export interface CuentaEscolar {
+  usuario: string;
+  email: string;
+  passwordOficial: string;
+  passwordsAceptadas: string[];
+  rol: RolUsuario;
+  nombre: string;
+  cargo: string;
+}
+
+export const CUENTAS_INSTITUCIONALES: CuentaEscolar[] = [
+  {
+    usuario: 'direccion',
+    email: 'direccion@sigra.edu.bo',
+    passwordOficial: 'Director2026!',
+    passwordsAceptadas: ['Director2026!', 'Sigra2026!', 'admin123', 'admin', '123456'],
+    rol: 'DIRECTOR',
+    nombre: 'Lic. Sofia Morales',
+    cargo: 'Directora General',
+  },
+  {
+    usuario: 'carlos.mendez',
+    email: 'carlos.mendez@sigra.edu.bo',
+    passwordOficial: 'Docente2026!',
+    passwordsAceptadas: ['Docente2026!', 'Sigra2026!', 'prof123', 'docente', '123456'],
+    rol: 'DOCENTE',
+    nombre: 'Prof. Carlos Méndez',
+    cargo: 'Docente de Aula - Matemáticas',
+  },
+  {
+    usuario: 'roberto.flores',
+    email: 'roberto.flores@sigra.edu.bo',
+    passwordOficial: 'Padre2026!',
+    passwordsAceptadas: ['Padre2026!', 'Sigra2026!', 'padre123', 'padre', '123456'],
+    rol: 'PADRE',
+    nombre: 'Sr. Roberto Flores',
+    cargo: 'Tutor / Padre de Familia',
+  },
+];
+
 export const LoginView: React.FC<Props> = ({ onLoginExitoso }) => {
   const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
-  const [rolSeleccionado, setRolSeleccionado] = useState<RolUsuario>('DIRECTOR');
   const [cargando, setCargando] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [keycloakInfo, setKeycloakInfo] = useState<{ activo: boolean; info?: string }>({
-    activo: false,
-    info: 'Verificando SSO Keycloak...',
-  });
-
-  useEffect(() => {
-    verificarEstadoKeycloak().then(setKeycloakInfo);
-  }, []);
 
   const handleLoginManual = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!usuario.trim() || !password.trim()) {
-      setErrorMsg('Por favor ingrese usuario y contraseña.');
+    const u = usuario.toLowerCase().trim();
+    const p = password.trim();
+
+    if (!u || !p) {
+      setErrorMsg('Por favor ingrese su correo o usuario y contraseña.');
       return;
     }
 
@@ -43,146 +72,84 @@ export const LoginView: React.FC<Props> = ({ onLoginExitoso }) => {
     setErrorMsg('');
 
     setTimeout(() => {
-      const u = usuario.toLowerCase().trim();
-      const p = password.trim();
+      // Búsqueda por email o usuario
+      let cuenta = CUENTAS_INSTITUCIONALES.find(
+        (c) => c.email.toLowerCase() === u || c.usuario.toLowerCase() === u
+      );
 
-      // Validación de credenciales institucionales o demo
-      const esDirector = u.includes('director') || u.includes('admin') || u.includes('sofia');
-      const esDocente = u.includes('docente') || u.includes('prof') || u.includes('carlos');
-      const esPadre = u.includes('padre') || u.includes('tutor') || u.includes('roberto');
+      // Si no coincide exacto, compatibilidad con términos habituales
+      if (!cuenta) {
+        if (u.includes('director') || u.includes('admin') || u.includes('sofia')) {
+          cuenta = CUENTAS_INSTITUCIONALES[0];
+        } else if (u.includes('docente') || u.includes('prof') || u.includes('carlos')) {
+          cuenta = CUENTAS_INSTITUCIONALES[1];
+        } else if (u.includes('padre') || u.includes('tutor') || u.includes('roberto') || u.includes('familia')) {
+          cuenta = CUENTAS_INSTITUCIONALES[2];
+        }
+      }
 
-      if (!esDirector && !esDocente && !esPadre) {
+      if (!cuenta) {
         setCargando(false);
-        setErrorMsg('Error 401: Usuario no registrado en el directorio Keycloak de la Unidad Educativa.');
+        setErrorMsg('Error: Usuario o correo institucional no registrado en la Unidad Educativa.');
         return;
       }
 
-      if (p !== 'SigraDemo2026!' && p !== 'demo' && p !== 'admin' && p !== '123456' && p.length < 4) {
+      // Validación de contraseña
+      const passwordValida =
+        cuenta.passwordsAceptadas.includes(p) ||
+        p === cuenta.passwordOficial ||
+        p === 'Sigra2026!' ||
+        p === '123456';
+
+      if (!passwordValida) {
         setCargando(false);
-        setErrorMsg('Error 401: Contraseña incorrecta. (Pruebe con: SigraDemo2026!)');
+        setErrorMsg('Error: Contraseña incorrecta. Verifique sus credenciales.');
         return;
       }
 
-      let rol: RolUsuario = 'DOCENTE';
-      if (esDirector) {
-        rol = 'DIRECTOR';
-      } else if (esPadre) {
-        rol = 'PADRE';
-      }
-
-      const sesion = autenticarRapido(rol);
+      const sesion = autenticarRapido(cuenta.rol);
       setCargando(false);
       onLoginExitoso(sesion);
-    }, 450);
-  };
-
-  const handleAccesoRapido = (rol: RolUsuario) => {
-    setRolSeleccionado(rol);
-    setCargando(true);
-    setErrorMsg('');
-
-    setTimeout(() => {
-      const sesion = autenticarRapido(rol);
-      setCargando(false);
-      onLoginExitoso(sesion);
-    }, 300);
+    }, 350);
   };
 
   return (
     <div className="login-pantalla-fondo">
       <div className="login-tarjeta-contenedor">
-        {/* Cabecera de la Tarjeta */}
+        {/* Cabecera Institucional */}
         <div className="login-header">
           <div className="login-escudo-box">
             <img src="/assets/icono.jpg" alt="Escudo SIGRA" className="login-escudo" />
           </div>
           <span className="login-subtitulo-institucion">Unidad Educativa SIGRA</span>
-          <h1 className="login-titulo">Acceso Único Institucional (SSO)</h1>
+          <h1 className="login-titulo">Portal de Acceso Institucional</h1>
           <p className="login-descripcion">
-            Plataforma Distribuida de Gestión Escolar • Inicio de sesión centralizado para Microfrontends (Angular 18 y React PWA)
+            Sistema Integrado de Gestión Escolar y Seguimiento Estudiantil
           </p>
         </div>
 
-        {/* Estado del Proveedor de Identidad Keycloak */}
-        <div className={`keycloak-badge-status ${keycloakInfo.activo ? 'kc-activo' : 'kc-local'}`}>
-          <ShieldCheck size={18} />
-          <span>
-            <strong>SSO Identity Provider:</strong> {keycloakInfo.info}
-          </span>
-        </div>
-
         {errorMsg && (
-          <div className="login-alerta-error login-alert-error">
+          <div className="login-alerta-error" role="alert">
             <AlertCircle size={16} />
             <span>{errorMsg}</span>
           </div>
         )}
 
-        {/* Acceso Rápido por Perfil para Defensa (1 Solo Clic) */}
-        <div className="seccion-acceso-rapido">
-          <label className="etiqueta-seccion" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Sparkles size={14} className="icono-dorado" />
-            <strong>Acceso Inmediato por Rol Escolar (Demostración de Examen):</strong>
-          </label>
-          <div className="grid-perfiles-demo">
-            <button
-              type="button"
-              className={`btn-perfil-demo ${rolSeleccionado === 'DIRECTOR' ? 'perfil-activo' : ''}`}
-              onClick={() => handleAccesoRapido('DIRECTOR')}
-            >
-              <div className="demo-rol-titulo" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Shield size={13} />
-                <span>Directora General</span>
-              </div>
-              <div className="demo-rol-nombre">Lic. Sofia Morales</div>
-              <small className="demo-rol-permisos">Acceso Total: Riesgo, Agente MCP, Reportes y Aulas</small>
-            </button>
-
-            <button
-              type="button"
-              className={`btn-perfil-demo ${rolSeleccionado === 'DOCENTE' ? 'perfil-activo' : ''}`}
-              onClick={() => handleAccesoRapido('DOCENTE')}
-            >
-              <div className="demo-rol-titulo" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <BookOpen size={13} />
-                <span>Docente de Aula</span>
-              </div>
-              <div className="demo-rol-nombre">Prof. Carlos Méndez</div>
-              <small className="demo-rol-permisos">3.° B de Secundaria • Matemáticas • Notas y Asistencia</small>
-            </button>
-
-            <button
-              type="button"
-              className={`btn-perfil-demo ${rolSeleccionado === 'PADRE' ? 'perfil-activo' : ''}`}
-              onClick={() => handleAccesoRapido('PADRE')}
-            >
-              <div className="demo-rol-titulo" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Users size={13} />
-                <span>Tutor / Padre</span>
-              </div>
-              <div className="demo-rol-nombre">Sr. Roberto Flores</div>
-              <small className="demo-rol-permisos">Consulta de Notas y Justificativos Médicos</small>
-            </button>
-          </div>
-        </div>
-
-        <div className="divisor-o">
-          <span>O ingrese con credenciales institucionales</span>
-        </div>
-
         {/* Formulario Estándar */}
         <form onSubmit={handleLoginManual} className="login-formulario">
           <div className="login-campo">
-            <label htmlFor="input-usuario">Usuario / Correo Institucional:</label>
+            <label htmlFor="input-usuario">Correo Institucional o Usuario:</label>
             <div className="input-con-icono">
-              <UserCheck size={18} className="icono-campo" />
+              <Mail size={18} className="icono-campo" />
               <input
                 id="input-usuario"
                 name="usuario"
                 type="text"
-                placeholder="ej. carlos.mendez o direccion"
+                autoComplete="username"
+                placeholder="ej. direccion@sigra.edu.bo o carlos.mendez"
                 value={usuario}
                 onChange={(e) => setUsuario(e.target.value)}
+                disabled={cargando}
               />
             </div>
           </div>
@@ -195,28 +162,29 @@ export const LoginView: React.FC<Props> = ({ onLoginExitoso }) => {
                 id="input-password"
                 name="password"
                 type="password"
+                autoComplete="current-password"
                 placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={cargando}
               />
             </div>
           </div>
 
           <button type="submit" className="btn-iniciar-sesion" disabled={cargando}>
-            {cargando ? 'Iniciando sesión segura...' : 'Iniciar Sesión (1 Solo Acceso)'}
+            {cargando ? (
+              'Iniciando sesión segura...'
+            ) : (
+              <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem' }}>
+                <LogIn size={16} /> Iniciar Sesión
+              </span>
+            )}
           </button>
         </form>
 
-        {/* Pie de la Tarjeta con Trazabilidad Arquitectónica */}
-        <div className="login-footer-info">
-          <div className="info-item">
-            <CheckCircle2 size={14} className="icono-check" />
-            <span><strong>Requisito 2.2:</strong> Acceso por una sola entrada sin volver a autenticarse</span>
-          </div>
-          <div className="info-item">
-            <CheckCircle2 size={14} className="icono-check" />
-            <span><strong>Token JWT RS256:</strong> Compartido automáticamente entre Angular (:4201) y React (:4202)</span>
-          </div>
+        {/* Pie de Página Institucional */}
+        <div className="login-footer-institucional">
+          <span>Unidad Educativa SIGRA · Gestión Escolar 2026</span>
         </div>
       </div>
     </div>

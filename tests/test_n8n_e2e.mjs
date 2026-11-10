@@ -227,10 +227,20 @@ async function main() {
     await cdp.send('Page.navigate', { url: 'http://localhost:4200' });
     await new Promise((r) => setTimeout(r, 1500));
 
-    // Si está en login, pulsar demo
-    const isLogin = await cdp.evaluate("!!document.querySelector('.btn-perfil-demo')");
+    // Si está en login, ingresar credenciales institucionales
+    const isLogin = await cdp.evaluate("!!document.querySelector('#input-usuario')");
     if (isLogin) {
-      await cdp.evaluate("document.querySelector('.btn-perfil-demo').click()");
+      await cdp.evaluate(`
+        const u = document.querySelector('#input-usuario');
+        const p = document.querySelector('#input-password');
+        const btn = document.querySelector('button[type="submit"]');
+        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        setter.call(u, 'direccion@sigra.edu.bo');
+        u.dispatchEvent(new Event('input', { bubbles: true }));
+        setter.call(p, 'Director2026!');
+        p.dispatchEvent(new Event('input', { bubbles: true }));
+        btn.click();
+      `);
       await new Promise((r) => setTimeout(r, 1000));
     }
 
