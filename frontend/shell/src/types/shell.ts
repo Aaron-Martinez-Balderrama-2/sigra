@@ -36,7 +36,7 @@ export const PERFILES_DEMO: Record<RolUsuario, SesionSso> = {
       sub: '33333333-3333-4333-8333-333333333333',
       nombre: 'Lic. Sofia Morales',
       roles: ['DIRECTOR', 'DOCENTE'],
-      cargo: 'Directora General de Unidad Educativa',
+      cargo: 'Directora General',
       email: 'direccion@sigra.edu.bo',
     },
     contextoEscolar: {

@@ -71,7 +71,9 @@ export const ShellHeader: React.FC<Props> = ({
               <div className="shell-usuario-meta">
                 <span className="shell-rol-tag rol-pill-tag">{actor.roles[0]}</span>
                 <span className="shell-contexto-tag usuario-cargo">
-                  {actor.cargo} • {sesion.contextoEscolar.cursoNombre}
+                  {actor.roles.includes('DIRECTOR')
+                    ? actor.cargo
+                    : `${actor.cargo} • ${sesion.contextoEscolar.cursoNombre}`}
                 </span>
               </div>
             </div>
