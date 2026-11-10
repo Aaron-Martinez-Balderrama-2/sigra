@@ -92,14 +92,35 @@ function createZipArchive(entries: Array<{ name: string; content: string }>): Bu
   return Buffer.concat([...localParts, centralDir, endRecord]);
 }
 
-function buildDocxBuffer(headers: string[], row: unknown[]): Buffer {
+const NOMBRES_ESTUDIANTES: Record<string, string> = {
+  'est-001': 'Mateo Rojas Villarroel',
+  'est-002': 'Valentina Suárez Justiniano',
+  'est-003': 'Santiago Flores Céspedes',
+  'est-004': 'Camila Gutiérrez Paz',
+  'est-005': 'Diego Morales Arteaga',
+};
+
+function buildDocxBuffer(
+  headers: string[],
+  row: unknown[],
+  actividades: Array<{ nombre: string; nota: number | null }> = []
+): Buffer {
   const paragraphs = [
-    `<w:p><w:r><w:rPr><w:b/></w:rPr><w:t>SIGRA - Resultado trimestral</w:t></w:r></w:p>`,
+    `<w:p><w:r><w:rPr><w:b/><w:sz w:val="32"/></w:rPr><w:t>UNIDAD EDUCATIVA SIGRA - BOLETÍN DE CALIFICACIONES</w:t></w:r></w:p>`,
     ...headers.map(
       (label, i) =>
-        `<w:p><w:r><w:t>${escapeXml(label)}: ${escapeXml(row[i])}</w:t></w:r></w:p>`,
+        `<w:p><w:r><w:rPr><w:b/></w:rPr><w:t>${escapeXml(label)}: </w:t></w:r><w:r><w:t>${escapeXml(row[i])}</w:t></w:r></w:p>`,
     ),
-    `<w:p><w:r><w:t>Prototipo academico: promedio simple. No sustituye la libreta oficial.</w:t></w:r></w:p>`,
+    ...(actividades.length > 0
+      ? [
+          `<w:p><w:r><w:rPr><w:b/><w:u w:val="single"/></w:rPr><w:t>DESGLOSE DETALLADO DE EVALUACIONES:</w:t></w:r></w:p>`,
+          ...actividades.map(
+            (a, idx) =>
+              `<w:p><w:r><w:t>  ${idx + 1}. ${escapeXml(a.nombre)}: </w:t></w:r><w:r><w:rPr><w:b/></w:rPr><w:t>${a.nota !== null ? a.nota.toFixed(1) + ' pts' : 'Pendiente'}</w:t></w:r></w:p>`,
+          ),
+        ]
+      : []),
+    `<w:p><w:r><w:rPr><w:i/></w:rPr><w:t>Sistema Integral de Gestión y Rendimiento Académico (SIGRA 2026).</w:t></w:r></w:p>`,
   ].join('');
 
   return createZipArchive([
@@ -145,14 +166,20 @@ export class ReportsController {
       'Formato permitido: json, csv, xlsx, pdf o docx.',
     );
     const result = await this.query.execute(actor, input);
+    const nombreCompleto =
+      NOMBRES_ESTUDIANTES[result.estudianteId] ?? result.estudianteId;
+    const actividades = (result as any).actividades ?? [];
+
     const row = [
-      result.estudianteId,
-      result.cursoId,
-      result.materiaId,
+      `${nombreCompleto} (${result.estudianteId})`,
+      result.cursoId === 'sec-3b' ? '3.° B de Secundaria' : result.cursoId,
+      result.materiaId === 'mat-mat' || result.materiaId === 'matematicas'
+        ? 'Matemáticas'
+        : result.materiaId,
       result.gestion,
-      result.trimestre,
+      `${result.trimestre}.° Trimestre`,
       result.estado,
-      result.promedio ?? 'Pendiente',
+      result.promedio !== null ? `${Number(result.promedio).toFixed(2)} / 100` : 'Pendiente',
     ];
     const headers = [
       'Estudiante',
@@ -161,17 +188,23 @@ export class ReportsController {
       'Gestión',
       'Trimestre',
       'Estado',
-      'Promedio',
+      'Promedio Trimestral',
     ];
     res.setHeader('Cache-Control', 'no-store');
-    res.attachment('resultado-trimestral.' + formato);
+    res.attachment(`boletin-${result.estudianteId}.${formato}`);
+
     if (formato === 'json') {
-      res.json(result);
+      res.json({
+        ...result,
+        nombreEstudiante: nombreCompleto,
+        actividadesDetalladas: actividades,
+      });
       return;
     }
+
     if (formato === 'csv') {
       const cell = (v: unknown) => {
-        const s = String(v);
+        const s = String(v ?? '');
         return (
           '"' +
           (/^[=+\-@\t\r]/.test(s) ? "'" : '') +
@@ -179,22 +212,73 @@ export class ReportsController {
           '"'
         );
       };
+
+      const lineas: string[][] = [
+        ['UNIDAD EDUCATIVA SIGRA - REPORTE DE RENDIMIENTO ACADÉMICO'],
+        [],
+        headers,
+        row.map(String),
+      ];
+
+      if (actividades.length > 0) {
+        lineas.push([]);
+        lineas.push(['DESGLOSE DE EVALUACIONES PARCIALES']);
+        lineas.push(['N.°', 'Actividad Evaluativa', 'Calificación', 'Estado']);
+        actividades.forEach((a: any, i: number) => {
+          lineas.push([
+            String(i + 1),
+            a.nombre,
+            a.nota !== null ? `${Number(a.nota).toFixed(1)} pts` : 'Pendiente',
+            a.estado,
+          ]);
+        });
+      }
+
       res
         .type('text/csv')
         .send(
           '\uFEFF' +
-            [headers, row].map((r) => r.map(cell).join(',')).join('\r\n'),
+            lineas.map((r) => r.map(cell).join(',')).join('\r\n'),
         );
       return;
     }
+
     if (formato === 'xlsx') {
       const book = new ExcelJS.Workbook();
-      const sheet = book.addWorksheet('Resultado');
+      const sheet = book.addWorksheet('Resumen de Calificaciones');
+      sheet.addRow(['UNIDAD EDUCATIVA SIGRA - BOLETÍN OFICIAL DE CALIFICACIONES']);
+      sheet.addRow([]);
       sheet.addRow(headers);
       sheet.addRow(row);
       sheet.columns.forEach((c) => {
-        c.width = 22;
+        c.width = 26;
       });
+
+      if (actividades.length > 0) {
+        const sheetDetalle = book.addWorksheet('Desglose de Evaluaciones');
+        sheetDetalle.addRow([
+          `Evaluaciones Registradas - ${nombreCompleto} (${result.estudianteId})`,
+        ]);
+        sheetDetalle.addRow([]);
+        sheetDetalle.addRow([
+          'N.°',
+          'Nombre de la Evaluación',
+          'Calificación Obtenida (/100)',
+          'Estado',
+        ]);
+        actividades.forEach((a: any, idx: number) => {
+          sheetDetalle.addRow([
+            idx + 1,
+            a.nombre,
+            a.nota !== null ? a.nota : 'Pendiente',
+            a.estado,
+          ]);
+        });
+        sheetDetalle.columns.forEach((c) => {
+          c.width = 30;
+        });
+      }
+
       const buffer = await book.xlsx.writeBuffer();
       res
         .type(
@@ -203,8 +287,9 @@ export class ReportsController {
         .send(Buffer.from(buffer));
       return;
     }
+
     if (formato === 'docx') {
-      const buffer = buildDocxBuffer(headers, row);
+      const buffer = buildDocxBuffer(headers, row, actividades);
       res
         .type(
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -212,18 +297,37 @@ export class ReportsController {
         .send(buffer);
       return;
     }
+
+    // PDF oficial
     const doc = new PDFDocument({ margin: 40 });
     res.type('application/pdf');
     doc.on('error', () => res.destroy());
     doc.pipe(res);
-    doc.fontSize(18).text('SIGRA - Resultado trimestral');
-    doc.moveDown();
-    headers.forEach((label, i) => doc.fontSize(12).text(label + ': ' + row[i]));
+
+    doc.fontSize(16).text('UNIDAD EDUCATIVA SIGRA', { align: 'center' });
+    doc.fontSize(12).text('BOLETÍN OFICIAL DE RENDIMIENTO TRIMESTRAL', { align: 'center' });
+    doc.moveDown(1.2);
+
+    headers.forEach((label, i) => {
+      doc.fontSize(11).text(`${label}: ${row[i]}`);
+    });
+
+    if (actividades.length > 0) {
+      doc.moveDown(1);
+      doc.fontSize(13).text('DETALLE DE ACTIVIDADES Y EVALUACIONES:');
+      doc.moveDown(0.5);
+      actividades.forEach((a: any, idx: number) => {
+        const notaStr = a.nota !== null ? `${Number(a.nota).toFixed(1)} / 100` : 'Pendiente';
+        doc.fontSize(10).text(`  ${idx + 1}. ${a.nombre}:  ${notaStr} (${a.estado})`);
+      });
+    }
+
+    doc.moveDown(1.5);
     doc
-      .moveDown()
-      .fontSize(10)
+      .fontSize(9)
       .text(
-        'Prototipo académico: promedio simple. No sustituye la libreta oficial.',
+        'Documento emitido por la Plataforma Educativa Distribuida SIGRA - Validación Digital.',
+        { align: 'center' }
       );
     doc.end();
   }

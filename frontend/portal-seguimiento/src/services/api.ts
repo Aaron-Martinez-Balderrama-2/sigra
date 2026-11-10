@@ -125,9 +125,56 @@ function getBaseUrls() {
 
 async function fetchConFallback(
   directUrl: string,
-  _proxyPath: string,
+  proxyPath: string,
   init?: RequestInit
 ): Promise<Response> {
+  // 1. Intento con URL directa principal
+  try {
+    const res = await fetch(directUrl, init);
+    if (res.ok || res.status < 500) {
+      return res;
+    }
+  } catch {
+    // Si la conexión directa falla (CORS, red local, o timeout)
+  }
+
+  // 2. Intento a través del proxy inverso de Vite (mismo origen del microfrontend)
+  if (proxyPath) {
+    try {
+      const proxyInit = init ? { ...init } : undefined;
+      const resProxy = await fetch(proxyPath, proxyInit);
+      if (resProxy.ok || resProxy.status < 500) {
+        return resProxy;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // 3. Fallback alternando 127.0.0.1 <-> localhost para evitar bloqueos de PNA en Chrome
+  if (directUrl.includes('127.0.0.1')) {
+    try {
+      const altUrl = directUrl.replace('127.0.0.1', 'localhost');
+      const resAlt = await fetch(altUrl, init);
+      if (resAlt.ok || resAlt.status < 500) {
+        return resAlt;
+      }
+    } catch {
+      // ignore
+    }
+  } else if (directUrl.includes('localhost')) {
+    try {
+      const altUrl = directUrl.replace('localhost', '127.0.0.1');
+      const resAlt = await fetch(altUrl, init);
+      if (resAlt.ok || resAlt.status < 500) {
+        return resAlt;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // 4. Último intento directo para retornar la respuesta o error estándar
   return await fetch(directUrl, init);
 }
 
@@ -141,22 +188,30 @@ export async function verificarSaludMsRiesgo(): Promise<{
   architecture?: string;
 }> {
   const { riesgo } = getBaseUrls();
-  try {
-    const res = await fetchConFallback(
-      `${riesgo}/api/v1/health`,
-      '/proxy-riesgo/api/v1/health',
-      { signal: AbortSignal.timeout(4000) }
-    );
-    if (!res.ok) return { online: false };
-    const body = await res.json();
-    return {
-      online: body.status === 'UP',
-      database: body.database,
-      architecture: body.architecture,
-    };
-  } catch {
-    return { online: false };
+  const endpoints = [
+    '/proxy-riesgo/api/v1/health',
+    `${riesgo}/api/v1/health`,
+    'http://localhost:8001/api/v1/health',
+    'http://127.0.0.1:8001/api/v1/health',
+  ];
+
+  for (const ep of endpoints) {
+    try {
+      const res = await fetch(ep, { signal: AbortSignal.timeout(2500) });
+      if (res.ok) {
+        const body = await res.json();
+        return {
+          online: body.status === 'UP',
+          database: body.database,
+          architecture: body.architecture,
+        };
+      }
+    } catch {
+      // intentar siguiente
+    }
   }
+
+  return { online: false };
 }
 
 export async function verificarSaludN8n(): Promise<{

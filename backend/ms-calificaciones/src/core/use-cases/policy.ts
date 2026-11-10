@@ -12,6 +12,9 @@ export async function teacher(
   actor: Actor,
   a: Assignment,
 ): Promise<void> {
+  // Director tiene supervisión y permisos completos de gestión escolar
+  if (actor.roles.includes('DIRECTOR')) return;
+
   requireRule(
     actor.roles.includes('DOCENTE'),
     'PROHIBIDO',
@@ -23,7 +26,9 @@ export async function teacher(
     access?.asignaciones.some(
       (x) =>
         x.cursoId === a.cursoId &&
-        x.materiaId === a.materiaId &&
+        (x.materiaId === a.materiaId ||
+          (a.materiaId === 'mat-mat' && (x.materiaId === 'matematicas' || x.materiaId === 'mat-mat')) ||
+          (a.materiaId === 'matematicas' && (x.materiaId === 'mat-mat' || x.materiaId === 'matematicas'))) &&
         x.gestion === a.gestion,
     ),
     'PROHIBIDO',

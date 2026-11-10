@@ -139,6 +139,142 @@ export class InMemoryStore extends MemoryData implements Store {
     for (const t of ALL_TABLES) {
       initial[t] = new Map<string, any>();
     }
+
+    // Seed de cursos escolares oficiales
+    initial.cursos.set('sec-3b', {
+      id: 'sec-3b',
+      nivel: 'SECUNDARIA',
+      grado: 3,
+      paralelo: 'B',
+      gestion: 2026,
+      estudiantes: ['est-001', 'est-002', 'est-003'],
+    });
+    initial.cursos.set('pri-2a', {
+      id: 'pri-2a',
+      nivel: 'PRIMARIA',
+      grado: 2,
+      paralelo: 'A',
+      gestion: 2026,
+      estudiantes: ['est-004'],
+    });
+
+    // Seed de periodos escolares
+    const materias = ['matematicas', 'mat-mat'];
+    for (const m of materias) {
+      for (let trim = 1; trim <= 3; trim++) {
+        const idPeriodo = `2026:sec-3b:${m}:${trim}`;
+        initial.periodos.set(idPeriodo, {
+          id: idPeriodo,
+          cursoId: 'sec-3b',
+          materiaId: m,
+          gestion: 2026,
+          trimestre: trim,
+          estado: trim === 1 ? 'CERRADO' : 'ABIERTO',
+        });
+      }
+    }
+
+    // Seed de evaluaciones oficiales del 1.er Trimestre
+    const listaEvaluaciones = [
+      {
+        id: 'eval-01',
+        nombre: 'Diagnóstico Inicial de Álgebra y Aritmética',
+        descripcion: 'Operaciones combinadas, potenciación y radicación',
+        fecha: '2026-02-20',
+      },
+      {
+        id: 'eval-02',
+        nombre: 'Primer Examen Parcial de Álgebra',
+        descripcion: 'Ecuaciones de primer grado y sistemas lineales 2x2',
+        fecha: '2026-03-18',
+      },
+      {
+        id: 'eval-03',
+        nombre: 'Trabajo Práctico y Resolución de Problemas',
+        descripcion: 'Cuaderno pedagógico y guía metodológica resuelta',
+        fecha: '2026-04-10',
+      },
+      {
+        id: 'eval-04',
+        nombre: 'Evaluación Trimestral Centralizadora',
+        descripcion: 'Prueba sumativa estandarizada de fin de trimestre',
+        fecha: '2026-04-28',
+      },
+    ];
+
+    const notasEstudiantes: Record<string, number[]> = {
+      // Valentina Suárez (estudiante destacada, promedio sobresaliente 97.5)
+      'est-002': [98, 95, 100, 97],
+      // Mateo Rojas (estudiante en riesgo potencial de rezago, promedio 51.25)
+      'est-001': [45, 50, 58, 52],
+      // Santiago Flores (estudiante regular con justificativos y atrasos, promedio 64.5)
+      'est-003': [65, 60, 70, 63],
+    };
+
+    for (const m of materias) {
+      for (let i = 0; i < listaEvaluaciones.length; i++) {
+        const baseEval = listaEvaluaciones[i];
+        const evalId = m === 'mat-mat' ? baseEval.id : `${baseEval.id}-alt`;
+        const evalDoc = {
+          id: evalId,
+          cursoId: 'sec-3b',
+          materiaId: m,
+          gestion: 2026,
+          trimestre: 1,
+          nombre: baseEval.nombre,
+          descripcion: baseEval.descripcion,
+          fecha: baseEval.fecha,
+          docenteId: '11111111-1111-4111-8111-111111111111',
+          estado: 'PUBLICADA',
+          version: 1,
+          creadoEn: `${baseEval.fecha}T08:00:00Z`,
+          actualizadoEn: `${baseEval.fecha}T12:00:00Z`,
+        };
+        initial.evaluaciones.set(evalId, evalDoc);
+
+        for (const [estId, notas] of Object.entries(notasEstudiantes)) {
+          const gradeId = `${evalId}:${estId}`;
+          initial.calificaciones.set(gradeId, {
+            id: gradeId,
+            evaluacionId: evalId,
+            estudianteId: estId,
+            nota: notas[i],
+            version: 1,
+            actualizadoEn: `${baseEval.fecha}T12:30:00Z`,
+          });
+        }
+      }
+    }
+
+    // Seed de asignaciones de acceso
+    const asignacionesCompletas = [
+      { cursoId: 'sec-3b', materiaId: 'matematicas', gestion: 2026 },
+      { cursoId: 'sec-3b', materiaId: 'mat-mat', gestion: 2026 },
+      { cursoId: 'pri-2a', materiaId: 'matematicas', gestion: 2026 },
+      { cursoId: 'pri-2a', materiaId: 'mat-mat', gestion: 2026 },
+    ];
+
+    // Docente Carlos Méndez
+    initial.accesos.set('11111111-1111-4111-8111-111111111111', {
+      id: '11111111-1111-4111-8111-111111111111',
+      asignaciones: asignacionesCompletas,
+      estudiantes: [],
+    });
+
+    // Directora Sofia Morales
+    initial.accesos.set('33333333-3333-4333-8333-333333333333', {
+      id: '33333333-3333-4333-8333-333333333333',
+      asignaciones: asignacionesCompletas,
+      estudiantes: ['est-001', 'est-002', 'est-003'],
+    });
+
+    // Padre Roberto Flores
+    initial.accesos.set('22222222-2222-4222-8222-222222222222', {
+      id: '22222222-2222-4222-8222-222222222222',
+      asignaciones: [],
+      estudiantes: ['est-001', 'est-002', 'est-003'],
+    });
+
     super(initial);
   }
 
