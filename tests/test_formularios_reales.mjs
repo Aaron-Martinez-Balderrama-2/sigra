@@ -191,17 +191,28 @@ async function main() {
     // A. Formulario 1: Asistencia de Aula (:4201/asistencia)
     console.log('\n--- PROBANDO FORMULARIO 1: GUARDAR ASISTENCIA DEL CURSO ---');
     await cdp.send('Page.navigate', { url: 'http://localhost:4201/asistencia' });
-    await new Promise((r) => setTimeout(r, 2000));
+
+    // Esperar a que el botón esté presente
+    for (let i = 0; i < 20; i++) {
+      const btnReady = await cdp.evaluate(`Boolean(document.querySelector('.btn-guardar-principal'))`);
+      if (btnReady) break;
+      await new Promise((r) => setTimeout(r, 300));
+    }
 
     await cdp.evaluate(`
       const btn = document.querySelector('.btn-guardar-principal');
       if (btn) btn.click();
     `);
-    await new Promise((r) => setTimeout(r, 1200));
 
-    const bannerAsistencia = await cdp.evaluate(`
-      document.querySelector('.alerta-exito, .alerta-error, .alerta-offline')?.textContent?.trim() ?? ''
-    `);
+    // Esperar banner
+    let bannerAsistencia = '';
+    for (let i = 0; i < 20; i++) {
+      await new Promise((r) => setTimeout(r, 300));
+      bannerAsistencia = await cdp.evaluate(`
+        document.querySelector('.alerta-exito, .alerta-error, .alerta-offline')?.textContent?.trim() ?? ''
+      `);
+      if (bannerAsistencia) break;
+    }
     console.log('Mensaje en pantalla (Asistencia):', bannerAsistencia);
     asistenciaOk = bannerAsistencia.includes('exitosa') || bannerAsistencia.includes('guardada') || bannerAsistencia.includes('PostgreSQL');
     console.log('Asistencia guardada con éxito:', asistenciaOk ? 'SÍ ✓' : 'NO ✗');

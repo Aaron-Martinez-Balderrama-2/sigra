@@ -169,7 +169,7 @@ export class InMemoryStore extends MemoryData implements Store {
           materiaId: m,
           gestion: 2026,
           trimestre: trim,
-          estado: trim === 1 ? 'CERRADO' : 'ABIERTO',
+          estado: 'ABIERTO',
         });
       }
     }
