@@ -1,7 +1,7 @@
 {
   "format": "layers-model",
-  "generatedBy": "keras v3",
-  "convertedBy": "SIGRA Exporter (TensorFlow.js Specification)",
+  "generatedBy": "keras v3 (entrenado con fotos reales)",
+  "convertedBy": "SIGRA Exporter",
   "modelTopology": {
     "module": "keras",
     "class_name": "Sequential",

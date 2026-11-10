@@ -201,7 +201,7 @@ export const EscanerCnnTfjs: React.FC<Props> = ({ token, contexto }) => {
         token,
       });
       setMensajeEnvio(
-        `Justificativo registrado en ms-asistencia (PostgreSQL): ID=${resp.id} | Clasificación CNN=${resp.clasificacionCnn} | Estado=${resp.estadoRevision}`
+        `✓ Justificativo registrado con éxito en ms-asistencia (PostgreSQL): ID=${resp.id} | Clasificación CNN=${resp.clasificacionCnn}. Ya está visible en la Bandeja del Docente para su resolución.`
       );
     } catch (err) {
       setErrorMsg((err as Error).message);
@@ -387,152 +387,163 @@ export const EscanerCnnTfjs: React.FC<Props> = ({ token, contexto }) => {
           <div className="pane-header">
             <div className="pane-title-group">
               <h2>
-                <Cpu /> Dictamen de Legibilidad y Registro Offline
+                <Cpu /> Registro de Justificativo y Dictamen Neuronal
               </h2>
               <p className="pane-subtitle">
-                Clasificación binaria CNN y redacción pedagógica autónoma sin conexión
+                Digitalización del certificado médico con Red Neuronal CNN y envío a PostgreSQL
               </p>
             </div>
           </div>
 
-          {!resultadoCnn ? (
-            <div className="empty-hint">
-              Seleccione una muestra de prueba, cargue una imagen o active la cámara para
-              obtener el dictamen de la red convolucional y redactar la observación escolar.
-            </div>
-          ) : (
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}
-              data-testid="resultado-cnn-panel"
-            >
-              <div
-                className={`cnn-verdict-box ${resultadoCnn.valido ? 'valid' : 'invalid'}`}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+            {/* Formulario de Emisión Siempre Visible */}
+            <div className="form-group">
+              <label htmlFor="select-est-cnn"><strong>Estudiante de Colegio a justificar:</strong></label>
+              <select
+                id="select-est-cnn"
+                className="form-control"
+                value={estudianteId}
+                onChange={(e) => setEstudianteId(e.target.value)}
               >
-                <div>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.04em' }}>
-                    CLASIFICACIÓN NEURONAL
-                  </div>
-                  <div
-                    style={{ fontSize: '1.05rem', fontWeight: 700 }}
-                    data-testid="clase-predicha-cnn"
-                  >
-                    {resultadoCnn.clase === 'LEGIBLE'
-                      ? 'DOCUMENTO LEGIBLE (APTO)'
-                      : 'DOCUMENTO ILEGIBLE (BORROSO)'}
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>
-                    {resultadoCnn.confianzaPorcentaje}%
-                  </div>
-                  <div style={{ fontSize: '0.72rem', opacity: 0.85 }}>
-                    {resultadoCnn.latenciaMs} ms
-                  </div>
-                </div>
-              </div>
+                {CATALOGO_ESTUDIANTES_COLEGIO.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.nombre} ({e.id} · {e.cursoNombre})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-              <div className="form-grid-2">
-                <div className="feature-bar-item">
-                  <div className="feature-bar-head">
-                    <span>Probabilidad Legible</span>
-                    <strong>{resultadoCnn.probabilidadLegible}%</strong>
-                  </div>
-                  <div className="feature-bar-track">
-                    <div
-                      className="feature-bar-fill"
-                      style={{
-                        width: `${resultadoCnn.probabilidadLegible}%`,
-                        backgroundColor: 'var(--verde-exito)',
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className="feature-bar-item">
-                  <div className="feature-bar-head">
-                    <span>Probabilidad Ilegible</span>
-                    <strong>{resultadoCnn.probabilidadIlegible}%</strong>
-                  </div>
-                  <div className="feature-bar-track">
-                    <div
-                      className="feature-bar-fill"
-                      style={{
-                        width: `${resultadoCnn.probabilidadIlegible}%`,
-                        backgroundColor: 'var(--colegio-rojo-principal)',
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="editorial-note" data-testid="observacion-ia-offline">
-                <div
-                  style={{
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
-                    color: 'var(--colegio-azul-oscuro)',
-                    marginBottom: '0.2rem',
-                  }}
-                >
-                  Observación Pedagógica Local (Offline)
-                </div>
-                <p>{resultadoCnn.observacionOffline}</p>
-              </div>
-
+            <div className="form-grid-1-2">
               <div className="form-group">
-                <label htmlFor="select-est-cnn">Estudiante a justificar</label>
-                <select
-                  id="select-est-cnn"
+                <label htmlFor="input-fecha-cnn"><strong>Fecha de inasistencia:</strong></label>
+                <input
+                  id="input-fecha-cnn"
+                  type="date"
                   className="form-control"
-                  value={estudianteId}
-                  onChange={(e) => setEstudianteId(e.target.value)}
-                >
-                  {CATALOGO_ESTUDIANTES_COLEGIO.map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {e.nombre} ({e.id} · {e.cursoNombre})
-                    </option>
-                  ))}
-                </select>
+                  value={fechaFalta}
+                  onChange={(e) => setFechaFalta(e.target.value)}
+                />
               </div>
-
-              <div className="form-grid-1-2">
-                <div className="form-group">
-                  <label htmlFor="input-fecha-cnn">Fecha de inasistencia</label>
-                  <input
-                    id="input-fecha-cnn"
-                    type="date"
-                    className="form-control"
-                    value={fechaFalta}
-                    onChange={(e) => setFechaFalta(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="input-motivo-cnn">Motivo respaldado</label>
-                  <input
-                    id="input-motivo-cnn"
-                    type="text"
-                    className="form-control"
-                    value={motivoJustificativo}
-                    onChange={(e) => setMotivoJustificativo(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="action-row">
-                <button
-                  type="button"
-                  className="btn btn-dorado"
-                  disabled={procesando}
-                  onClick={() => void registrarEnMsAsistencia()}
-                  data-testid="btn-registrar-justificativo-cnn"
-                >
-                  <Send /> Registrar en ms-asistencia ({resultadoCnn.clase})
-                </button>
+              <div className="form-group">
+                <label htmlFor="input-motivo-cnn"><strong>Motivo o diagnóstico médico:</strong></label>
+                <input
+                  id="input-motivo-cnn"
+                  type="text"
+                  className="form-control"
+                  value={motivoJustificativo}
+                  onChange={(e) => setMotivoJustificativo(e.target.value)}
+                  placeholder="Ej. Certificado médico pediátrico por cuadro gripal"
+                />
               </div>
             </div>
-          )}
+
+            {/* Dictamen Neuronal (CNN) */}
+            {!resultadoCnn ? (
+              <div className="empty-hint" style={{ padding: '1.25rem' }}>
+                <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b', lineHeight: 1.45 }}>
+                  📌 <strong>Paso siguiente:</strong> Seleccione una muestra (Muestra Legible / Muestra Ilegible), suba el archivo del certificado o active la cámara web en el panel izquierdo para evaluar la legibilidad con la Red Neuronal (CNN) antes de registrar.
+                </p>
+              </div>
+            ) : (
+              <div
+                style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}
+                data-testid="resultado-cnn-panel"
+              >
+                <div
+                  className={`cnn-verdict-box ${resultadoCnn.valido ? 'valid' : 'invalid'}`}
+                >
+                  <div>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.04em' }}>
+                      CLASIFICACIÓN NEURONAL (CNN)
+                    </div>
+                    <div
+                      style={{ fontSize: '1.05rem', fontWeight: 700 }}
+                      data-testid="clase-predicha-cnn"
+                    >
+                      {resultadoCnn.clase === 'LEGIBLE'
+                        ? '✓ DOCUMENTO LEGIBLE (APTO)'
+                        : '✕ DOCUMENTO ILEGIBLE (BORROSO)'}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+                      {resultadoCnn.confianzaPorcentaje}%
+                    </div>
+                    <div style={{ fontSize: '0.72rem', opacity: 0.85 }}>
+                      {resultadoCnn.latenciaMs} ms
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-grid-2">
+                  <div className="feature-bar-item">
+                    <div className="feature-bar-head">
+                      <span>Probabilidad Legible</span>
+                      <strong>{resultadoCnn.probabilidadLegible}%</strong>
+                    </div>
+                    <div className="feature-bar-track">
+                      <div
+                        className="feature-bar-fill"
+                        style={{
+                          width: `${resultadoCnn.probabilidadLegible}%`,
+                          backgroundColor: 'var(--verde-exito)',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="feature-bar-item">
+                    <div className="feature-bar-head">
+                      <span>Probabilidad Ilegible</span>
+                      <strong>{resultadoCnn.probabilidadIlegible}%</strong>
+                    </div>
+                    <div className="feature-bar-track">
+                      <div
+                        className="feature-bar-fill"
+                        style={{
+                          width: `${resultadoCnn.probabilidadIlegible}%`,
+                          backgroundColor: 'var(--colegio-rojo-principal)',
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="editorial-note" data-testid="observacion-ia-offline">
+                  <div
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      color: 'var(--colegio-azul-oscuro)',
+                      marginBottom: '0.2rem',
+                    }}
+                  >
+                    Observación Pedagógica Local (Offline)
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.82rem', lineHeight: 1.4 }}>{resultadoCnn.observacionOffline}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Botón de Envío Directo a PostgreSQL */}
+            <button
+              type="button"
+              className="btn btn-dorado btn-block"
+              disabled={procesando || !resultadoCnn}
+              onClick={() => void registrarEnMsAsistencia()}
+              data-testid="btn-registrar-justificativo-cnn"
+              style={{ padding: '0.75rem', fontSize: '0.9rem', fontWeight: 700, marginTop: '0.5rem' }}
+            >
+              <Send />
+              {procesando
+                ? 'Registrando en PostgreSQL...'
+                : !resultadoCnn
+                ? '⚠️ Evalúe el documento con la CNN para habilitar el envío'
+                : `📤 Enviar Justificativo a ms-asistencia (${resultadoCnn.clase})`}
+            </button>
+          </div>
         </div>
       </section>
     </div>

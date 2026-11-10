@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { ResultadoInferenciaCnn } from '../types/sigra';
 
-const IDB_MODEL_KEY = 'indexeddb://sigra-cnn-legibilidad-v1';
+const IDB_MODEL_KEY = 'indexeddb://sigra-cnn-legibilidad-v2';
 
 const WEIGHT_SPECS: Array<{ name: string; shape: number[]; size: number }> = [
   { name: 'conv1/kernel', shape: [3, 3, 1, 16], size: 3 * 3 * 1 * 16 },
@@ -121,7 +121,7 @@ export async function obtenerModeloCnnLocal(
 
   // 1. Intentar descargar el binario desde /ai/cnn_tfjs/group1-shard1of1.bin (o Service Worker Cache)
   try {
-    const res = await fetch('/ai/cnn_tfjs/group1-shard1of1.bin');
+    const res = await fetch('/ai/cnn_tfjs/group1-shard1of1.bin?v=real_v2', { cache: 'no-cache' });
     if (res.ok) {
       const buf = await res.arrayBuffer();
       const model = construirTopologiaCnn();
@@ -247,7 +247,19 @@ export function extraerGris64x64DesdeElementoVisual(
   if (!ctx) {
     throw new Error('No se pudo inicializar el contexto 2D del Canvas para preprocesar imagen.');
   }
-  ctx.drawImage(source, 0, 0, 64, 64);
+
+  // Encuadre adaptativo: si es una foto apaisada de una hoja vertical sobre una mesa, centrar el recorte
+  const srcW = (source as HTMLVideoElement).videoWidth || (source as HTMLImageElement).naturalWidth || source.width || 64;
+  const srcH = (source as HTMLVideoElement).videoHeight || (source as HTMLImageElement).naturalHeight || source.height || 64;
+
+  if (srcW > srcH * 1.35) {
+    const sw = srcH * 0.95;
+    const sx = (srcW - sw) / 2;
+    ctx.drawImage(source, sx, 0, sw, srcH, 0, 0, 64, 64);
+  } else {
+    ctx.drawImage(source, 0, 0, 64, 64);
+  }
+
   const imgData = ctx.getImageData(0, 0, 64, 64).data;
   const gray = new Float32Array(64 * 64);
 
