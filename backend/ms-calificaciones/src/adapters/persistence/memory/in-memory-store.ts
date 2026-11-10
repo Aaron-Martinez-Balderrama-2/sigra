@@ -139,6 +139,70 @@ export class InMemoryStore extends MemoryData implements Store {
     for (const t of ALL_TABLES) {
       initial[t] = new Map<string, any>();
     }
+
+    // Seed de cursos escolares oficiales
+    initial.cursos.set('sec-3b', {
+      id: 'sec-3b',
+      nivel: 'SECUNDARIA',
+      grado: 3,
+      paralelo: 'B',
+      gestion: 2026,
+      estudiantes: ['est-001', 'est-002', 'est-003'],
+    });
+    initial.cursos.set('pri-2a', {
+      id: 'pri-2a',
+      nivel: 'PRIMARIA',
+      grado: 2,
+      paralelo: 'A',
+      gestion: 2026,
+      estudiantes: ['est-004'],
+    });
+
+    // Seed de periodos escolares (abiertos)
+    const materias = ['matematicas', 'mat-mat'];
+    for (const m of materias) {
+      for (let trim = 1; trim <= 3; trim++) {
+        const idPeriodo = `2026:sec-3b:${m}:${trim}`;
+        initial.periodos.set(idPeriodo, {
+          id: idPeriodo,
+          cursoId: 'sec-3b',
+          materiaId: m,
+          gestion: 2026,
+          trimestre: trim,
+          estado: 'ABIERTO',
+        });
+      }
+    }
+
+    // Seed de asignaciones de acceso
+    const asignacionesCompletas = [
+      { cursoId: 'sec-3b', materiaId: 'matematicas', gestion: 2026 },
+      { cursoId: 'sec-3b', materiaId: 'mat-mat', gestion: 2026 },
+      { cursoId: 'pri-2a', materiaId: 'matematicas', gestion: 2026 },
+      { cursoId: 'pri-2a', materiaId: 'mat-mat', gestion: 2026 },
+    ];
+
+    // Docente Carlos Méndez
+    initial.accesos.set('11111111-1111-4111-8111-111111111111', {
+      id: '11111111-1111-4111-8111-111111111111',
+      asignaciones: asignacionesCompletas,
+      estudiantes: [],
+    });
+
+    // Directora Sofia Morales
+    initial.accesos.set('33333333-3333-4333-8333-333333333333', {
+      id: '33333333-3333-4333-8333-333333333333',
+      asignaciones: asignacionesCompletas,
+      estudiantes: ['est-001', 'est-002', 'est-003'],
+    });
+
+    // Padre Roberto Flores
+    initial.accesos.set('22222222-2222-4222-8222-222222222222', {
+      id: '22222222-2222-4222-8222-222222222222',
+      asignaciones: [],
+      estudiantes: ['est-001', 'est-002', 'est-003'],
+    });
+
     super(initial);
   }
 
