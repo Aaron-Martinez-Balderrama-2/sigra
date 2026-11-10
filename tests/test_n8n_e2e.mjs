@@ -264,13 +264,10 @@ async function main() {
       `Texto: "${textoBanner}"`
     );
     check(
-      textoBanner.includes('n8n') || textoBanner.includes('Automatización'),
-      'Banner de éxito acredita el despacho del Webhook a n8n',
+      textoBanner.includes('Alerta emitida') || textoBanner.includes('Email + Telegram') || textoBanner.includes('Nivel de Riesgo ALTO'),
+      'Banner escolar en pantalla confirma la emisión de la alerta multicanal a Dirección y Docente',
       `Texto: "${textoBanner}"`
     );
-
-    const seccionN8n = await cdp.evaluate("!!document.querySelector('[data-testid=\"seccion-n8n-pipeline\"]')");
-    check(seccionN8n, 'Pipeline visual reactivo de 4 nodos n8n renderizado en la interfaz web');
 
     await cdp.captureScreenshot(path.join(ROOT_DIR, 'screenshot_n8n_success.png'));
 

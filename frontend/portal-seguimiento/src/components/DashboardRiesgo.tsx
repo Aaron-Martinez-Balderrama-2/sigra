@@ -3,16 +3,11 @@ import {
   AlertCircle,
   CheckCircle2,
   Database,
-  FileText,
-  Mail,
   Play,
-  Radio,
   RefreshCw,
   RotateCcw,
-  Send,
   ShieldCheck,
   SlidersHorizontal,
-  Zap,
 } from 'lucide-react';
 import {
   AnalisisRiesgo,
@@ -26,7 +21,6 @@ import {
   crearAnalisisPendienteRiesgo,
   evaluarRiesgoEstudiante,
   verificarSaludMsRiesgo,
-  verificarSaludN8n,
 } from '../services/api';
 
 interface Props {
@@ -45,32 +39,12 @@ interface LogIdempotencia {
   mensaje: string;
 }
 
-interface EventoN8nVisual {
-  analisisId: string;
-  estudianteNombre: string;
-  nivelRiesgo: string;
-  canal: string;
-  resultado: string;
-  fecha: string;
-  payload: any;
-  exito: boolean;
-}
-
 export const DashboardRiesgo: React.FC<Props> = ({ token, contexto, modoTest = false }) => {
   const [saludRiesgo, setSaludRiesgo] = useState<{
     online: boolean;
     database?: string;
     architecture?: string;
   }>({ online: false });
-
-  const [saludN8n, setSaludN8n] = useState<{
-    online: boolean;
-    workflow?: string;
-    totalEjecuciones?: number;
-  }>({ online: false });
-
-  const [ultimoEventoN8n, setUltimoEventoN8n] = useState<EventoN8nVisual | null>(null);
-  const [mostrarJsonN8n, setMostrarJsonN8n] = useState<boolean>(false);
 
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState<string>('est-001');
   const [asistenciaInput, setAsistenciaInput] = useState<number>(60.0);
@@ -91,13 +65,6 @@ export const DashboardRiesgo: React.FC<Props> = ({ token, contexto, modoTest = f
     setErrorMsg('');
     const health = await verificarSaludMsRiesgo();
     setSaludRiesgo(health);
-
-    try {
-      const n8nHealth = await verificarSaludN8n();
-      setSaludN8n(n8nHealth);
-    } catch {
-      // ignore
-    }
 
     try {
       const resM = await fetch('/ai/metricas_ml.json');
@@ -170,37 +137,14 @@ export const DashboardRiesgo: React.FC<Props> = ({ token, contexto, modoTest = f
         token,
       });
 
-      const n8nMsg = evaluado.n8nNotificado
-        ? `⚡ Automatización n8n: Alerta multicanal emitida (${evaluado.n8nDetalle?.canal ?? 'Email + Telegram'}).`
+      const notifMsg = evaluado.n8nNotificado
+        ? `Alerta emitida a Dirección y Docente (${evaluado.n8nDetalle?.canal ?? 'Email + Telegram'}).`
         : (evaluado.analisis.nivelRiesgo !== 'BAJO'
-            ? 'Evento despachado automáticamente a n8n.'
-            : 'Sin alerta crítica.');
-
-      if (evaluado.n8nNotificado || evaluado.analisis.nivelRiesgo !== 'BAJO') {
-        setUltimoEventoN8n({
-          analisisId: evaluado.analisis.id,
-          estudianteNombre: alumnoObj.nombre,
-          nivelRiesgo: evaluado.analisis.nivelRiesgo,
-          canal: evaluado.n8nDetalle?.canal ?? 'Email Institucional + Telegram Coordinación',
-          resultado: evaluado.n8nDetalle?.resultado ?? 'NOTIFICACION_PRIORITARIA_ENVIADA',
-          fecha: new Date().toLocaleTimeString(),
-          payload: {
-            analisisId: evaluado.analisis.id,
-            estudianteId: estudianteSeleccionado,
-            estudianteNombre: alumnoObj.nombre,
-            curso: contexto.cursoNombre,
-            asistenciaPorcentaje: asistenciaInput,
-            promedioCalificaciones: promedioInput,
-            nivelRiesgo: evaluado.analisis.nivelRiesgo,
-            canales: ['email_docente', 'telegram_coordinacion'],
-            timestamp: new Date().toISOString(),
-          },
-          exito: true,
-        });
-      }
+            ? 'Notificación escolar despachada.'
+            : 'Rendimiento escolar regular.');
 
       setMensajeEstado(
-        `Análisis ${evaluado.analisis.id} evaluado en DynamoDB: Nivel de Riesgo ${evaluado.analisis.nivelRiesgo}. ${n8nMsg}`
+        `Evaluación completada para ${alumnoObj.nombre}: Nivel de Riesgo ${evaluado.analisis.nivelRiesgo}. ${notifMsg}`
       );
 
       const lista = await consultarAlertasEstudianteCurso(
@@ -596,148 +540,6 @@ export const DashboardRiesgo: React.FC<Props> = ({ token, contexto, modoTest = f
             </table>
           </div>
         </div>
-      </section>
-
-      {/* Requisito 1.9 & CU-14: Monitor Visual de Automatización con n8n */}
-      <section className="section-surface n8n-pipeline-section" data-testid="seccion-n8n-pipeline">
-        <div className="pane-header">
-          <div className="pane-title-group">
-            <h3>
-              <Zap /> {modoTest ? 'Pipeline Reactivo n8n (:5678) — Requisito 1.9' : 'Automatización y Notificaciones en Vivo (n8n)'}
-            </h3>
-            <p className="pane-subtitle">
-              {modoTest
-                ? 'Webhook HTTP -> Router Condicional IF -> Despacho Multicanal (Email + Telegram) -> Acuse 200 OK'
-                : 'Monitoreo de flujo automatizado de alertas para el personal académico'}
-            </p>
-          </div>
-          <div className="n8n-status-badge-group">
-            <span
-              className={`badge ${saludN8n.online ? 'badge-bajo' : 'badge-alto'}`}
-              data-testid="status-n8n-badge"
-            >
-              <span className={`status-dot ${saludN8n.online ? 'online' : 'offline'}`} />
-              {saludN8n.online
-                ? (modoTest ? 'Motor n8n UP (:5678)' : 'Automatización Activa')
-                : (modoTest ? 'n8n Offline (:5678)' : 'Automatización en Pausa')}
-            </span>
-            {saludN8n.totalEjecuciones != null && (
-              <span className="badge badge-neutral">
-                {saludN8n.totalEjecuciones} ejecuciones registradas
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Flujo Gráfico de 4 Nodos de n8n */}
-        <div className="n8n-nodes-grid">
-          {/* Nodo 1: Webhook */}
-          <div className={`n8n-node-card ${ultimoEventoN8n ? 'node-active' : ''}`}>
-            <div className="node-step-tag">Nodo 1 · Trigger</div>
-            <div className="node-icon-title">
-              <Zap className="node-icon" />
-              <strong>Webhook Receptor</strong>
-            </div>
-            <div className="node-meta">
-              <code>POST /webhook/alerta-riesgo</code>
-              <span className="node-submeta">Puerto 5678 · ms-riesgo</span>
-            </div>
-            <div className="node-status-chip chip-success">
-              <CheckCircle2 /> {ultimoEventoN8n ? '200 OK Recibido' : 'Escuchando'}
-            </div>
-          </div>
-
-          <div className="n8n-connector">➔</div>
-
-          {/* Nodo 2: Router Condicional */}
-          <div className={`n8n-node-card ${ultimoEventoN8n ? 'node-active' : ''}`}>
-            <div className="node-step-tag">Nodo 2 · Regla IF</div>
-            <div className="node-icon-title">
-              <SlidersHorizontal className="node-icon" />
-              <strong>Filtro Condicional</strong>
-            </div>
-            <div className="node-meta">
-              <code>Nivel == ALTO | MEDIO</code>
-              <span className="node-submeta">Evita spam en Riesgo BAJO</span>
-            </div>
-            <div className="node-status-chip chip-warning">
-              <ShieldCheck /> {ultimoEventoN8n ? `Evaluado: ${ultimoEventoN8n.nivelRiesgo}` : 'Regla activa'}
-            </div>
-          </div>
-
-          <div className="n8n-connector">➔</div>
-
-          {/* Nodo 3: Enrutador Multicanal */}
-          <div className={`n8n-node-card ${ultimoEventoN8n ? 'node-active' : ''}`}>
-            <div className="node-step-tag">Nodo 3 · Enrutador</div>
-            <div className="node-icon-title">
-              <Send className="node-icon" />
-              <strong>Despacho Multicanal</strong>
-            </div>
-            <div className="node-channels-list">
-              <div className="node-channel-item">
-                <Mail /> <span>Email: docente@sigra.edu.bo</span>
-              </div>
-              <div className="node-channel-item">
-                <Radio /> <span>Telegram: #coordinacion</span>
-              </div>
-            </div>
-            <div className="node-status-chip chip-success">
-              <CheckCircle2 /> {ultimoEventoN8n ? 'Emitido Multicanal' : 'En cola'}
-            </div>
-          </div>
-
-          <div className="n8n-connector">➔</div>
-
-          {/* Nodo 4: Acuse y Trazabilidad */}
-          <div className={`n8n-node-card ${ultimoEventoN8n ? 'node-active' : ''}`}>
-            <div className="node-step-tag">Nodo 4 · Trazabilidad</div>
-            <div className="node-icon-title">
-              <Database className="node-icon" />
-              <strong>Acuse y Auditoría</strong>
-            </div>
-            <div className="node-meta">
-              <code>DynamoDB Local (:8000)</code>
-              <span className="node-submeta">Timestamp ISO-8601</span>
-            </div>
-            <div className="node-status-chip chip-neutral">
-              {ultimoEventoN8n ? `Acuse: ${ultimoEventoN8n.fecha}` : 'Sincronizado'}
-            </div>
-          </div>
-        </div>
-
-        {/* Resumen del Último Evento */}
-        {ultimoEventoN8n && (
-          <div className="n8n-last-event-banner">
-            <div className="n8n-event-info">
-              <CheckCircle2 className="icon-success" />
-              <div>
-                <strong>Último flujo n8n ejecutado con éxito:</strong> Notificación prioritaria para{' '}
-                <strong>{ultimoEventoN8n.estudianteNombre}</strong> ({renderBadgeRiesgo(ultimoEventoN8n.nivelRiesgo)}){' '}
-                despachada por <strong>{ultimoEventoN8n.canal}</strong> a las {ultimoEventoN8n.fecha}.
-              </div>
-            </div>
-            <button
-              type="button"
-              className="btn btn-outline btn-sm"
-              onClick={() => setMostrarJsonN8n(!mostrarJsonN8n)}
-            >
-              <FileText /> {mostrarJsonN8n ? 'Ocultar Payload JSON' : 'Ver Payload JSON'}
-            </button>
-          </div>
-        )}
-
-        {mostrarJsonN8n && ultimoEventoN8n && (
-          <div className="n8n-payload-viewer">
-            <div className="viewer-head">
-              <span>Payload HTTP recibido por el Webhook de n8n (:5678)</span>
-              <code>Content-Type: application/json</code>
-            </div>
-            <pre className="viewer-code">
-              {JSON.stringify(ultimoEventoN8n.payload, null, 2)}
-            </pre>
-          </div>
-        )}
       </section>
 
       {/* Historial Persistido en DynamoDB y Compensación SAGA */}
