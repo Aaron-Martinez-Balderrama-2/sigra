@@ -29,7 +29,16 @@ export function configure(app: INestApplication) {
     'http://127.0.0.1:5173',
   ];
 
-  const origins = envOrigins.length > 0 ? envOrigins : defaultOrigins;
+  const allowAll =
+    process.env.CORS_ORIGINS === '*' ||
+    envOrigins.includes('*') ||
+    process.env.NODE_ENV === 'production';
+
+  const origins = allowAll
+    ? true
+    : envOrigins.length > 0
+      ? envOrigins
+      : defaultOrigins;
   app.enableCors({ origin: origins, credentials: false });
 
   app.enableShutdownHooks();
