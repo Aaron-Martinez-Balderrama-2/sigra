@@ -269,6 +269,9 @@ async function main() {
       `Texto: "${textoBanner}"`
     );
 
+    const seccionN8n = await cdp.evaluate("!!document.querySelector('[data-testid=\"seccion-n8n-pipeline\"]')");
+    check(seccionN8n, 'Pipeline visual reactivo de 4 nodos n8n renderizado en la interfaz web');
+
     await cdp.captureScreenshot(path.join(ROOT_DIR, 'screenshot_n8n_success.png'));
 
   } finally {

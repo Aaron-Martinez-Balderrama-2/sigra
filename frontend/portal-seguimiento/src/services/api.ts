@@ -159,6 +159,27 @@ export async function verificarSaludMsRiesgo(): Promise<{
   }
 }
 
+export async function verificarSaludN8n(): Promise<{
+  online: boolean;
+  workflow?: string;
+  totalEjecuciones?: number;
+}> {
+  try {
+    const res = await fetch('http://127.0.0.1:5678/health', {
+      signal: AbortSignal.timeout(2000),
+    });
+    if (!res.ok) return { online: false };
+    const body = await res.json();
+    return {
+      online: body.status === 'UP',
+      workflow: body.workflow,
+      totalEjecuciones: body.totalEjecuciones,
+    };
+  } catch {
+    return { online: false };
+  }
+}
+
 export async function crearAnalisisPendienteRiesgo(params: {
   operationId: string;
   sagaId?: string;
