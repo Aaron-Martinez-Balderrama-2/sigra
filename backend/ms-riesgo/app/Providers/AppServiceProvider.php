@@ -27,10 +27,10 @@ class AppServiceProvider extends ServiceProvider
                     'key' => $config['credentials']['key'] ?? 'fakeMyKeyId',
                     'secret' => $config['credentials']['secret'] ?? 'fakeSecretAccessKey',
                 ],
-                'retries' => 0,
+                'retries' => (int) env('DYNAMODB_RETRIES', 2),
                 'http' => [
-                    'connect_timeout' => 0.2,
-                    'timeout' => 0.5,
+                    'connect_timeout' => (float) env('DYNAMODB_CONNECT_TIMEOUT', 5.0),
+                    'timeout' => (float) env('DYNAMODB_TIMEOUT', 8.0),
                 ],
             ]);
         });
