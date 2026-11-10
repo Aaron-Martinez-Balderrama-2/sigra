@@ -14,7 +14,13 @@ RUN apk add --no-cache \
     libzip-dev \
     && docker-php-ext-install pdo pdo_mysql zip
 
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+
 COPY . .
+RUN composer dump-autoload --optimize
 
 EXPOSE 8001
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8001"]
+CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT:-8001}"]
